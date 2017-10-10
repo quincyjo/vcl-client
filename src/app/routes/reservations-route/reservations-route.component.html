@@ -1,0 +1,16 @@
+<vcl-list
+  [title]="'Reservations'"
+  [selectable]="true"
+  [items]="reservations"
+  [options]="options"
+  [columns]="columns"
+  (buttonClicked)="handleListEvent($event)"
+  (scrolledToBottom)="onScrolledToBottom($event)"
+  #list>
+</vcl-list>
+<!-- <vcl-reservation-list
+  [pagable]="false"
+  [more]="hasNext"
+  [reservations]="reservations"
+  (requestNext)="loadMore($event)">
+</vcl-reservation-list> -->

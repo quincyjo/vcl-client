@@ -1,0 +1,80 @@
+<md-tab-group [dynamicHeight]="false">
+  <md-tab label="VCL">
+    <h3 class="title">Connect to reservation using Sandbox VCL 2.4.2 Web Interface 2</h3>
+    <p>
+      Use your web browser to connect to the following IP address. Select "Local Account" as the authentication method, and use the given userid and password.
+    </p>
+    <table>
+      <tr><th>
+          Remove Computer:
+        </th><td>
+          {{reservation.remoteIP}}
+      </td></tr>
+      <tr><th>
+          User ID:
+        </th><td>
+          admin
+      </td></tr>
+      <tr><th>
+          Password:
+        </th><td>
+          (password in /root/vcl_web_password within reservation)
+      </td></tr>
+    </table>
+    <p>
+      NOTE: The web server has a self-signed SSL certificate. Your browser will probably prompt you that it is self signed and ask if you want to view the site anyway.
+    </p>
+  </md-tab>
+  <md-tab label="SSH">
+    <h3 class="title">Connect to reservation using xRDP for Linux</h3>
+    <p>
+      You will need to use a Remote Desktop program to connect to the system. If you did not click on the Connect! button from the computer you will be using to access the VCL system, you will need to return to the Current Reservations page and click the Connect! button from a web browser running on the same computer from which you will be connecting to the VCL system. Otherwise, you may be denied access to the remote computer.
+    </p>
+    <table>
+      <tr><th>
+          Remove Computer:
+        </th><td>
+          {{reservation.remoteIP}}
+      </td></tr>
+      <tr><th>
+          User ID:
+        </th><td>
+          ?
+      </td></tr>
+      <tr><th>
+          Password:
+        </th><td>
+          {{reservation.pw}}
+      </td></tr>
+    </table>
+    <p>
+      NOTE: Unless stated to use your campus password. The given password is for this reservation only. You will be given a different password for any other reservations.
+    </p>
+  </md-tab>
+  <md-tab label="xRDP">
+    <h3 class="title">Connect to reservation using SSH (Secure Shell) on Port 22</h3>
+    <p>
+      You will need to have an X server running on your local computer and use an ssh client to connect to the system. If you did not click on the Connect! button from the computer you will be using to access the VCL system, you will need to return to the Current Reservations page and click the Connect! button from a web browser running on the same computer from which you will be connecting to the VCL system. Otherwise, you may be denied access to the remote computer.
+    </p>
+    <table>
+      <tr><th>
+          Remove Computer:
+        </th><td>
+          {{reservation.remoteIP}}
+      </td></tr>
+      <tr><th>
+          User ID:
+        </th><td>
+          ?
+      </td></tr>
+      <tr><th>
+          Password:
+        </th><td>
+          {{reservation.pw}}
+      </td></tr>
+    </table>
+    <p>
+      NOTE: Unless stated to use your campus password. The given password is for this reservation only. You will be given a different password for any other reservations.
+    </p>
+  </md-tab>
+</md-tab-group>

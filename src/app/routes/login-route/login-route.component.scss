@@ -1,0 +1,56 @@
+#container {
+  max-width: 450px;
+  margin: 0 auto;
+  box-shadow: 0 20px 30px -20px rgba(0,0,0,0.2);
+  border-bottom: 1px solid #ccc;
+
+  .form {
+
+    .title {
+      padding: 10px;
+      font-size: 1.5em;
+      margin: 0;
+      border-bottom: 5px solid rgb(43, 68, 158);
+    }
+
+    .content {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 25px 50px;
+      background: #fff;
+
+      $error-color: rgb(199, 38, 38);
+      .error {
+        margin: 10px auto;
+        color: $error-color;
+        border: 1px solid $error-color;
+        border-radius: 5px;
+        background: transparentize($error-color, 0.8);
+        padding: 20px 15px;
+        animation: fade-in 0.5s ease-out;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .full-width {
+        width: 100%;
+
+        * {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+.loading {
+  transition: opacity 0.5s ease-out;
+  opacity: 0.0;
+}

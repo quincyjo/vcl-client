@@ -1,0 +1,69 @@
+$primary-color: #3F51B5;
+
+#container {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100vh;
+
+  #header {
+    color: #fff;
+    background-color: $primary-color;
+    flex: 0 0 auto;
+    padding: 10px 0;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+
+    .row {
+      display: flex;
+      flex-direction: row;
+    }
+
+    #navigation {
+      align-self: flex-start;
+      flex: 0 0 auto;
+      .item {
+        text-transform: uppercase;
+        font-weight: normal;
+      }
+    }
+
+    .spacer {
+      flex: 1 1 100%;
+    }
+
+    #user {
+      align-self: flex-end;
+      flex: 0 0 auto;
+
+      button.active {
+        background: #fff;
+        display: none;
+      }
+    }
+  }
+
+  #content {
+    padding: 25px;
+    flex: 1 0 auto;
+
+    $base: #f9f9f9;
+    &.fractal {
+      display: flex;
+      align-items: center;
+      padding-bottom: 25%;
+      background-color: $base;
+      background-image:
+        linear-gradient(110deg, transparent 75%, darken($base, 5%) 75%),
+        linear-gradient(60deg, transparent 80%, darken($base, 6%) 80%),
+        linear-gradient(80deg, transparent 95%, darken($base, 4%) 95%),
+        linear-gradient(80deg, transparent 50%, darken($base, 3%) 50%),
+        linear-gradient(80deg, transparent 25%, darken($base, 2%) 25%);
+    }
+  }
+
+  #footer {
+    color: #fff;
+    background: $primary-color;
+    padding: 25px;
+    flex: 0 0 auto;
+  }
+}

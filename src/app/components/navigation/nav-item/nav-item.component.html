@@ -1,0 +1,24 @@
+<div id="container">
+  <span *ngIf="link.routerLink || link.href">
+    <button md-button class="button"
+      [routerLink]="link.routerLink">
+      {{link.label}}
+    </button>
+  </span>
+  <span *ngIf="link.sub">
+      <md-menu yPosition="below" [overlapTrigger]="false" #subMenu="mdMenu">
+        <button md-menu-item
+          [routerLink]="subItem.routerLink"
+          *ngFor="let subItem of link.sub">
+          {{subItem.label}}
+        </button>
+      </md-menu>
+    <button md-button class="button"
+      [mdMenuTriggerFor]="subMenu">
+      {{link.label}}
+      <!-- <md-icon class="icon">
+        expand_more
+      </md-icon> -->
+    </button>
+  </span>
+</div>

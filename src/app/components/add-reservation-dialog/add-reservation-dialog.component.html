@@ -1,0 +1,64 @@
+<h1>Add Reservation</h1>
+<form novalidate
+  [formGroup]="addReservationForm"
+  (ngSubmit)="onSubmit()">
+  <md-select
+    id="reservationType"
+    class="form-control full-width"
+    placeholder="Type"
+    formControlName="type">
+    <md-option
+      [value]="type"
+      *ngFor="let type of getReservationTypes()">
+      {{type}}
+    </md-option>
+  </md-select>
+  <md-select
+    class="form-control full-width"
+    placeholder="Environment"
+    formControlName="env">
+    <md-option
+      [value]="env"
+      *ngFor="let env of getEnvironments()">
+      {{env}}
+    </md-option>
+  </md-select>
+  <div [ngSwitch]="addReservationForm.controls.type.value">
+    <ng-container *ngSwitchCase="'Basic Reservation'">
+    </ng-container>
+    <ng-container *ngSwitchCase="'Imaging Reservation'">
+    </ng-container>
+    <ng-container *ngSwitchCase="'Server Reservation'">
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+    </ng-container>
+  </div>
+  <md-form-field
+    class="form-control full-width">
+    <input mdInput
+      formControlName="start"
+      [min]="now"
+      [max]="end"
+      [mdDatepicker]="picker"
+      placeholder="Start">
+    <md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>
+    <md-datepicker #picker></md-datepicker>
+  </md-form-field>
+  <md-slide-toggle
+    (change)="onIndefiniteChange($event)"
+    class="form-control full-width"
+    formControlName="indefinite"
+    *ngIf="addReservationForm.controls.type.value === 'Server Reservation'">
+    Indefinite
+  </md-slide-toggle>
+  Duration: {{addReservationForm.controls.indefinite.value ? 'Indefinite' : printDuration(durations[addReservationForm.controls.duration.value])}}
+  <md-slider
+    class="form-control full-width"
+    min="0"
+    [max]="durations.length - 1"
+    formControlName="duration">
+  </md-slider>
+  <button md-raised-button color="primary" [disabled]="!addReservationForm.valid" type="submit">
+    Create
+  </button>
+</form>

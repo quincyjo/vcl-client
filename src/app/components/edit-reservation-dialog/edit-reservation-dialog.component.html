@@ -1,0 +1,9 @@
+<h1 id="title">Edit Reservation</h1>
+<form novalidate
+  [formGroup]="editReservationForm"
+  (ngSubmit)="onSubmit()">
+  <md-form-field class="full-width form-control">
+    <input mdInput id="reservationName" placeholder="Name" type="text" formControlName="name"/>
+  </md-form-field>
+  <button md-button [disabled]="!editReservationForm.valid" type="submit">Submit</button>
+</form>

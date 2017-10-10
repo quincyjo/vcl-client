@@ -1,0 +1,41 @@
+<div id="container">
+  <div class="form">
+    <h2 class="title">Sign In</h2>
+    <div class="content">
+      <div *ngIf="submitted && success === undefined">
+        signing in...
+      </div>
+      <form novalidate
+        [ngClass]="{
+          loading: submitted
+        }"
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()">
+        <md-form-field class="full-width">
+          <input mdInput
+            type="text"
+            placeholder="Username"
+            formControlName="username">
+        </md-form-field>
+        <md-form-field class="full-width">
+          <input mdInput
+            type="password"
+            placeholder="Password"
+            formControlName="password">
+        </md-form-field>
+        <div class="full-width">
+          <button md-button
+            type="submit"
+            [disabled]="!loginForm.valid">
+            Login
+          </button>
+        </div>
+        <div
+          class="error"
+          *ngIf="submitted && success === false">
+          Username and/or password was incorrect
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

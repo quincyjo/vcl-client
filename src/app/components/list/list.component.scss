@@ -1,0 +1,166 @@
+$primary-color: #3F51B5;
+
+#table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+
+  #head {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+
+    .header {
+      font-weight: normal;
+      text-align: left;
+      color: rgba(0,0,0,0.8);
+
+      &.number {
+        text-align: right;
+      }
+    }
+  }
+
+  #foot {
+    .row:last-child {
+      box-sizing: border-box;
+      height: 54px;
+    }
+  }
+
+  #body {
+    .row {
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      transition: background-color 0.3s ease-out;
+
+      .checkbox {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  .row {
+    box-sizing: border-box;
+    height: 48px;
+    padding-left: 24px;
+    padding-right: 14px;
+
+    &.selected {
+      background: rgba(0,0,0,0.04);
+      transition: background-color 0.2s lienar;
+    }
+
+    .cell {
+      padding: 0 10px;
+      font-size: 0.9em;
+      text-overflow: ellipsis;
+      max-width: 100px;
+      & > div {
+        max-width: 100em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &:first-child {
+        padding-left: 24px;
+      }
+
+      &:not(:first-child) {
+
+      }
+
+      &.icon {
+        box-sizing: border-box;
+        padding: 14px auto;
+        width: 18px;
+      }
+
+      &.number {
+        text-align: right;
+      }
+
+      &.header {
+        color: #444;
+        font-size: 0.75em;
+      }
+    }
+  }
+}
+
+#header {
+  box-sizing: border-box;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+
+  &.selected {
+    background-color: transparentize($primary-color, 0.8);
+    transition: background-color 0.25s ease-out;
+
+    .title {
+      color: $primary-color;
+      font-size: 1.15em;
+    }
+  }
+
+  .button {
+    text-transform: uppercase;
+    font-size: 1em;
+    transition: all 0.25s linear;
+
+    &.show {
+      opacity: 1;
+      transition: all 0.25s linear;
+    }
+  }
+
+  .title {
+    display: inline-block;
+    font-size: 1.25em;
+    font-weight: normal;
+    flex: 1 0 auto;
+  }
+
+  .options {
+    flex: 0 0 auto;
+    display: inline-block;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 0;
+    max-width: 0px;
+    transition: all 0.25s linear;
+
+    &.show {
+      opacity: 1;
+      max-width: 100px;
+      transition: all 0.25s linear;
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      max-width: 0px;
+    }
+    to {
+      opacity: 1;
+      max-width: 100px;
+    }
+  }
+}
+
+.none {
+  text-align: center;
+
+  h3 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    font-weight: normal;
+    padding: 50px;
+    color: rgba(0,0,0,0.6);
+    font-size: 1.25em;
+  }
+}
