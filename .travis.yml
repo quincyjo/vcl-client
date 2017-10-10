@@ -1,15 +1,19 @@
-#.travis.yml
+dist: trusty
+sudo: false
 
 language: node_js
 node_js:
-  - "8.1"
+  - "8"
 
-branches:
-  only:
-    - master
+cache:
+  directories:
+     - ./node_modules
 
-before_script:
-  - npm install -g @angular/cli
+install:
+  - npm install
 
 script:
-  - ng test 
+  # Use Chromium instead of Chrome.
+  - export CHROME_BIN=chromium-browser
+  - xvfb-run -a npm run test -- --single-run --no-progress --browser=ChromeNoSandbox
+  #- xvfb-run -a npm run e2e -- --no-progress --config=protractor-ci.conf.js
