@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/verbetam/vcl-client.svg?branch=master)](https://travis-ci.org/verbetam/vcl-client)
 # Vcl
 
 Client-side application for [Apache Virtual Computing Lab (VCL)](https://vcl.apache.org/).
@@ -25,3 +26,7 @@ The TestBed provides the MockBackendService in place of HttpClient.
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 Before running the tests make sure you are serving the app via `ng serve`.
+
+## Documentation
+
+Documentation can be generated using [CompoDoc](https://github.com/compodoc/compodoc).
