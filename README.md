@@ -1,4 +1,7 @@
-# Vcl
+[![Build Status](https://travis-ci.org/verbetam/vcl-client.svg?branch=master)](https://travis-ci.org/verbetam/vcl-client)
+[![codecov](https://codecov.io/gh/verbetam/vcl-client/branch/master/graph/badge.svg)](https://codecov.io/gh/verbetam/vcl-client)
+![documentation](./coverage-badge.svg)
+# VCL Client
 
 Client-side application for [Apache Virtual Computing Lab (VCL)](https://vcl.apache.org/).
 Developed independently from the business server-side logic to interact with the developing API.
@@ -21,7 +24,6 @@ When built with the `--environment=prod` flag is set, the application will inste
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 The TestBed provides the MockBackendService in place of HttpClient.
 
-## Running end-to-end tests
+## Documentation
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+Documentation can be generated using [CompoDoc](https://github.com/compodoc/compodoc) with the command `npm run compodoc`. The documentation is built in the `documentation/` directory.

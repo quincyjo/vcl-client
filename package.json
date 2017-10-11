@@ -7,10 +7,10 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test --code-coverage --watch false",
+    "posttest": "npm run compodoc && cp ./documentation/images/coverage-badge.svg ./",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "compodoc": "./node_modules/.bin/compodoc -p src/tsconfig.app.json"
-
   },
   "private": true,
   "dependencies": {
