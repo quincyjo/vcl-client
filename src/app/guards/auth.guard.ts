@@ -3,11 +3,14 @@ import { Router, CanActivate } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 
 /**
- * Guards a route against access while not authenticated.1
+ * Guards a route against access while not authenticated.
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
 
+  /**
+   * Constructs the auth guad.
+   */
   constructor(private _authenticationService: AuthenticationService,
               private _router: Router) { }
 

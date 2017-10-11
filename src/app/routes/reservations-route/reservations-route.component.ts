@@ -25,6 +25,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
   /** Shows if route is waiting on requested data to stall more requests. **/
   public loading: boolean;
 
+  /** Columns to be displayed by ListComponent for the list of reservations. **/
   public columns: Array<ListColumn> = [
     new ListColumn('Name'),
     new ListColumn('Ending', 'end', 'date'),
@@ -32,6 +33,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     new ListColumn('', 'Connect', 'button')
   ];
 
+  /** Options to be displayed by ListComponent for the list of reservations. **/
   public options: Array<ListOption> = [
     new ListOption('Edit'),
     new ListOption('End').setMany(true),
@@ -106,6 +108,11 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     return promise;
   }
 
+  /**
+   * Event handler for buttonClicked events emitted fomr the ViewChild
+   * ListComponent.
+   * @param {any} event The even emitted from `list`.
+   */
   public handleListEvent(event: any): void {
     // console.log(event);
     if (event.event === 'create') {
@@ -117,6 +124,10 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Event handler for the scrolledToBottom event emitted by `list` .
+   * @param {any} e The event.
+   */
   public onScrolledToBottom(e: any): void {
     this.loadMore();
   }

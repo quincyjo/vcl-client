@@ -34,6 +34,7 @@ export class MockBackendService {
   /** Internal ArrayModel for stored platforms. **/
   private _oses: ArrayModel<OS>;
 
+  /** Maps an url to available endpoints. **/
   private urlMap: any;
 
   constructor() {
@@ -225,6 +226,15 @@ export class MockBackendService {
     }
   }
 
+  /**
+   * Adds an items to the given model and creates a Response object based on the
+   * result of the attempted addition. Will always add as a new item and any
+   * pre-existing id attribtue of the given item.
+   * @param  {ArrayModel<T>} model The model too add the item to.
+   * @param  {T}             item  The item to add to `model`.
+   * @return {Response}      The Response object representing the result of the
+   *                         addition of `item` to `model`.
+   */
   private _addToModel<T extends Idable>(model: ArrayModel<T>, item: T): Success | Error {
     let id:number = model.add(item);
     let response = new Success(CODE.CREATED);
@@ -385,6 +395,12 @@ export class ArrayModel<T extends Idable> {
     return this.items.length;
   }
 
+  /**
+   * Constructs an ArrayModel of type T.
+   * @param  {Array<T>} data Optional parameter that will initialize the model
+   *                         with the items given in `data`.
+   * @return {ArrayModel<T>}        The ArrayModel.
+   */
   constructor(data?: Array<T>) {
     this.items = [];
     this.runningId = 0;
@@ -393,6 +409,12 @@ export class ArrayModel<T extends Idable> {
     }
   }
 
+  /**
+   * Adds all the items in `data` into the model.
+   * @param  {Array<T>} data An array of items of type T.
+   * @return {boolean}       True if successful, false if the operation could
+   *                         not be complete, such as a non-array was given.
+   */
   public loadFromArray(data: Array<T>): boolean {
     if (data && Array.isArray(data)) {
       for (const item of data) {
@@ -461,6 +483,13 @@ export class ArrayModel<T extends Idable> {
     }
   }
 
+  /**
+   * Finds the index in `items` of the given identifier. Both an object of typeof
+   * `T` or an id as a number can be given. -1 is returned if the item was not
+   * found.
+   * @param  {T   | number}      item The identifier for the target item.
+   * @return {number}   The index of item if found.
+   */
   private _findIndex(item: T | number): number {
     let id = typeof item === 'number'
            ? item
@@ -470,6 +499,12 @@ export class ArrayModel<T extends Idable> {
     });
   }
 
+  /**
+   * Finds the item with the given id and returns it. `undefined` is returned if
+   * if the item was not found.
+   * @param  {number} id The id of the target item.
+   * @return {T}         The item if it was found or `undefined`.
+   */
   private _findItem(id: number): T {
     return this.items.find((elem) => {
       return elem['id'] === id;
@@ -477,6 +512,10 @@ export class ArrayModel<T extends Idable> {
   }
 }
 
+/**
+ * An type for the object given to `_processResults` to choose how results
+ * are processed.
+ */
 export type ProcessOptions = {
   descriptor?: Object,
   start?: number,
@@ -484,10 +523,16 @@ export type ProcessOptions = {
   orderBy?: string | Array<string>
 }
 
+/**
+ * The possible reservation types.
+ */
 export type ReservationType = 'Basic Reservation'
                             | 'Imaging Reservation'
                             | 'Server Reservation';
 
+/**
+ * Type for the accepted possible request options, mocking HttpClient.
+ */
 export type RequestOptions = {
   params?: HttpParams
 }
@@ -525,6 +570,7 @@ export const RESERVATIONS: Array<Reservation> = [
   new Reservation('Reservation0', new Date(2017,8,19), new Date(2017,8,21))
 ];
 
+/** Constant images list for initially stored images. **/
 export const IMAGES: Array<Image> = [
   new Image('An Image!'),
   new Image('Another Image!'),
@@ -539,18 +585,22 @@ export const IMAGES: Array<Image> = [
   new Image('An Image!'),
 ];
 
+/** Constant users list for initially stored users. **/
 export const USERS: Array<User> = [
   new User('vclverbetam@gmail.com', 'Robert', 'Compton', 'Robby'),
 ];
 
+/** Constant image types list for initially stored image types. **/
 export const IMAGE_TYPES: Array<ImageType> = [
   new ImageType('Educational')
 ];
 
+/** Constant platforms list for initially stored platforms. **/
 export const PLATFORMS: Array<Platform> = [
   new Platform('Something')
 ];
 
+/** Constant OSes list for initially stored OSes. **/
 export const OSES: Array<OS> = [
   new OS('windows_7', 'Windows 7', 'windows')
 ];
@@ -569,6 +619,7 @@ export const ENVIRONMENTS:  Array<string> = [
   'Red Hat Enterprise Linux',
   'VCL Sandbox',
   'Windows 7 Base'
-]
+];
 
+/** Possible HTTPMethod types. **/
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';

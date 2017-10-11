@@ -12,7 +12,10 @@ export class HomeRouteComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  /**
+   * Angular life-cycle hook for after the component has been initialized.
+   */
+  public ngOnInit(): void {
   }
 
 }

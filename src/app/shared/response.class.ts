@@ -1,7 +1,17 @@
+/**
+ * A parnet class that describes a fake HTTP response from MockBackendService.
+ * @param  {number}   code The code for the reponse, 200 by default.
+ */
 export class Response {
+  /**
+   * The optional id of the target resource for POST, PUT, and DELETE responses.
+   */
   public id: number;
 
-  constructor(public code: number = 200) { }
+  constructor(
+    /** The status code of the response. **/
+    public code: number = 200
+  ) { }
 }
 
 /**
@@ -21,16 +31,31 @@ export class Error extends Response {
     if(!this.error) this.error = CODE_MAP[code];
   }
 
+  /**
+   * Sets the `code` attribtue of the Error.
+   * @param  {number} code The value to set `code` to.
+   * @return {Error}       The Error object.
+   */
   public setCode(code: number): Error {
     this.code = code;
     return this;
   }
 
+  /**
+   * Sets the `error` attribtue of the Error.
+   * @param  {string} error The value to set `error` to.
+   * @return {Error}        The Error object.
+   */
   public setError(error: string): Error {
     this.error = error;
     return this;
   }
 
+  /**
+   * Sets the `msg` attribtue of the Error.
+   * @param  {string} msg The value to set `msg` to.
+   * @return {Error}      The Error object.
+   */
   public setMsg(msg: string): Error {
     this.msg = msg;
     return this;
@@ -56,16 +81,31 @@ export class Success extends Response {
     if(!this.status) this.status = CODE_MAP[code];
   }
 
+  /**
+   * Sets the `code` attribtue of the Success.
+   * @param  {number}  code The value to set `code` to.
+   * @return {Success}      The Success object.
+   */
   public setCode(code: number): Success {
     this.code = code;
     return this;
   }
 
+  /**
+   * Sets the `status` attribtue of the Success.
+   * @param  {string}  status The value to set `status` to.
+   * @return {Success}        The Success object.
+   */
   public setStatus(status: string): Success {
     this.status = status;
     return this;
   }
 
+  /**
+   * Sets the `msg` attribtue of the Success.
+   * @param  {string}  msg The value to set `msg` to.
+   * @return {Success}     The Success object.
+   */
   public setMsg(msg: string): Success {
     this.msg = msg;
     return this;

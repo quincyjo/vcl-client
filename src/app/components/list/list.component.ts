@@ -6,20 +6,35 @@ import { sprintf } from 'sprintf-js';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
-export class ListComponent implements OnInit, OnChanges {
+export class ListComponent implements OnChanges {
+  /** The title of the list. If not set, 'Items' is the default value. **/
   @Input() title: string = 'Items';
+  /** Determines if the list is selectable or not. Enabled by default. **/
   @Input() selectable: boolean = true;
+  /** The list of items to display. **/
   @Input() items: Array<any> = [];
+  /** The columns to display in the list. **/
   @Input() columns: Array<ListColumn> = [];
+  /** The options to display if given, else option menues are not rendered. **/
   @Input() options: Array<ListOption> = [];
 
+  /** Output for when a button or option button is clicked. **/
   @Output() buttonClicked: EventEmitter<any>;
+  /** Output for when the bottom of the list is scrolled to. **/
   @Output() scrolledToBottom: EventEmitter<any>;
 
+  /** ViewChild for the table of items. **/
   @ViewChild('table') table: ElementRef;
 
+  /** Array containing the currently selected items. **/
   public selected: Array<any>;
 
+  /**
+   * The title to display at the top of the list. If no items are selected than
+   * `title` is used. If items are selected, 'item(s)' will be displayed with
+   * proper plurality.
+   * @return {string} The title to display.
+   */
   get tableTitle(): string {
     if(!this.selected.length) {
       return this.title;
@@ -30,6 +45,11 @@ export class ListComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Filters the given `options` to the ones which should be available across
+   * multiple items.
+   * @return {Array<ListOption>} The array of options to display in the header.
+   */
   get manyOptions(): Array<ListOption> {
     return this.options
       ? this.options.filter((option) => { return !!option.many; })
@@ -49,9 +69,13 @@ export class ListComponent implements OnInit, OnChanges {
     this.scrolledToBottom = new EventEmitter();
   }
 
-  ngOnInit() {
-  }
-
+  /**
+   * Angular life-cycle hook for when data bound to the component changes.
+   * Used to trim internal variables when the input `items` is changed.
+   * Specifically, when items are removed from the input, they are also removed
+   * from `selected` if present.
+   * @param {SimpleChanges} changes The changes to bound data.
+   */
   ngOnChanges(changes: SimpleChanges): void {
     let newSelected: Array<any> = [];
     for (let selected in this.selected) {
@@ -77,6 +101,15 @@ export class ListComponent implements OnInit, OnChanges {
     if (bottom > number) this.scrolledToBottom.emit();
   }
 
+  /**
+   * Prints a value from an item based on the column value and type. will
+   * convert values to proper strings to display.
+   * @param  {any}    item The item which is being displayed.
+   * @param  {any}    key  The column value, poitining to the attribtue of
+   *                       `item` to render.
+   * @param  {string} type The ColumnType to determine render method.
+   * @return {string}      The string to display.
+   */
   public print(item: any, key: any, type?: string): string {
     let value = item;
     let keys = key.split('.');
@@ -128,12 +161,20 @@ export class ListComponent implements OnInit, OnChanges {
     this.selectItem(item, event.checked);
   }
 
+  /**
+   * Event handler for when the user clicks on the 'add' button. Emits an event
+   * to allow handling outside of ListComponent.
+   */
   public onAddClicked(): void {
     this.buttonClicked.emit({
       event: 'create'
     })
   }
 
+  /**
+   * Event handler for when the user clicks on the 'delete' button. Emits an
+   * event to allow handling outside of ListComponent.
+   */
   public deleteSelected(): void {
     for (const item of this.selected) {
       this.buttonClicked.emit({
@@ -143,6 +184,12 @@ export class ListComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Handles a many option by emitting a series of events for each selected item
+   * with the proper event key.
+   * @param {MouseEvent} event  The mouse event on the button.
+   * @param {ListOption} option The list option when was targetd.
+   */
   public onManyButtonClick(event: MouseEvent, option: ListOption): void {
     this.buttonClicked.emit({
       target: this.selected.slice(),
@@ -150,6 +197,13 @@ export class ListComponent implements OnInit, OnChanges {
     })
   }
 
+  /**
+   * Generic event handler for when a button column is clicked on. Emits an
+   * object with the event name and target item.
+   * @param {MouseEvent} event  The mouse event of the click.
+   * @param {any}        item   The target item.
+   * @param {any}        column The column which was the button clicked.
+   */
   public onButtonClick(event: MouseEvent, item: any, column: any): void {
     let output = {
       target: item,
