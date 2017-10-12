@@ -41,15 +41,20 @@ export class LoginRouteComponent {
    * login errors to the user if authentication fails. Sets `submitted` to true
    * and `success` to the response from `_authenticationService`.
    */
-  public onSubmit(): void {
+  public onSubmit(): Promise<boolean> {
+    let promise = new Promise((resolve, reject) => {
     this.submitted = true;
     this._authenticationService.authenticate(this.loginForm.value)
-    .then((success) => {
-      this.success = true;
-      this._router.navigate(['/home']);
-    })
-    .catch((error) => {
-      this.success = false;
+      .then((success) => {
+        this.success = true;
+        this._router.navigate(['/home']);
+        resolve(true);
+      })
+      .catch((error) => {
+        this.success = false;
+        reject(false);
+      });
     });
+    return promise;
   }
 }

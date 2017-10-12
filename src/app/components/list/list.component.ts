@@ -79,10 +79,11 @@ export class ListComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     let newSelected: Array<any> = [];
     for (let selected in this.selected) {
-      if (changes.items.currentValue.find((elem) => {
+      let found = changes.items.currentValue.find((elem) => {
         return selected['id'] === elem.id;
-      })) {
-        newSelected.push(selected);
+      });
+      if (found) {
+        newSelected.push(found);
       }
     }
     this.selected = newSelected;
@@ -181,7 +182,7 @@ export class ListComponent implements OnChanges {
         target: item,
         event: 'delete'
       });
-    }
+    };
   }
 
   /**
@@ -191,10 +192,12 @@ export class ListComponent implements OnChanges {
    * @param {ListOption} option The list option when was targetd.
    */
   public onManyButtonClick(event: MouseEvent, option: ListOption): void {
-    this.buttonClicked.emit({
-      target: this.selected.slice(),
-      event: option.event
-    })
+    for (const item of this.selected) {
+      this.buttonClicked.emit({
+        target: item,
+        event: option.event
+      });
+    };
   }
 
   /**
@@ -234,9 +237,13 @@ export  type ListColumnType = 'string' | 'date' | 'button' | 'number' | undefine
  */
 export class ListColumn {
   constructor(
+    /** The header string for the column. **/
     public header: string,
+    /** The object key path for the value to display in the column. **/
     public value: string = header.toLowerCase(),
+    /** The type of content the target value is. **/
     public type: ListColumnType = 'string',
+    /** The identifier string for events for the column. **/
     public event: string = value.toLowerCase().replace(' ', '_')
   ) { }
 
@@ -293,8 +300,11 @@ export class ListColumn {
  */
 export class ListOption {
   constructor(
+    /** The printable label for the option. **/
     public label: string,
+    /** The event identifier string for events for the option. **/
     public event: string = label.toLowerCase().replace(' ', '_'),
+    /** If the option is executable over multiple items. **/
     public many: boolean = false
   ) { }
 
@@ -323,7 +333,7 @@ export class ListOption {
    * @param  {boolean}    many The value to set `many` to.
    * @return {ListOption}      The ListOption object.
    */
-  public setMany(many: boolean): ListOption {
+  public setMany(many: boolean = true): ListOption {
     this.many = many;
     return this;
   }

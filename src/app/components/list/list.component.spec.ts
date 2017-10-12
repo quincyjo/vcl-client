@@ -121,6 +121,44 @@ describe('ListComponent', () => {
     })
   });
 
+  it('should select all', () => {
+    component.selectAll({checked: true});
+    expect(component.selected.length).toEqual(component.items.length);
+    for (const item of component.selected) {
+      expect(item.selected).toBeTruthy();
+    }
+  });
+
+  it('should select item on checkbox change', () => {
+    let spy = spyOn(component, 'selectItem')
+      .and.stub();
+    component.onSelectedChange({ checked: true}, component.items[0]);
+    expect(spy).toHaveBeenCalledWith(component.items[0], true);
+  });
+
+  it('should emit on add clicked', () => {
+    let spy = spyOn(component.buttonClicked, 'emit')
+      .and.stub();
+    component.onAddClicked();
+    expect(spy).toHaveBeenCalledWith({event: 'create'});
+  });
+
+  it('should emit for each selected item on deleteSelected', () => {
+    let spy = spyOn(component.buttonClicked, 'emit')
+      .and.stub();
+    component.selectAll({checked: true});
+    component.deleteSelected();
+    expect(spy).toHaveBeenCalledTimes(5);
+  });
+
+  it('should emit for each selected item on many option', () => {
+    let spy = spyOn(component.buttonClicked, 'emit')
+      .and.stub();
+    component.selectAll({checked: true});
+    component.onManyButtonClick({} as MouseEvent, new ListOption('asdf'));
+    expect(spy).toHaveBeenCalledTimes(5);
+  });
+
   it('should render the list', () => {
     let compiled = fixture.debugElement.children[0].nativeElement;
     expect(compiled.querySelector('#table #body').children.length).toEqual(wrapper.items.length);
@@ -141,14 +179,26 @@ describe('ListComponent', () => {
   });
 
   it('should remove selected on deletion', () => {
-    component.selected = [component.items[0]];
+    component.selectItem(wrapper.items[0]);
     fixture.detectChanges();
     wrapper.items = [];
     fixture.detectChanges();
     expect(component.selected.length).toEqual(0);
   });
 
-  it('should not render options is non are given', () => {
+  it('should emit the column event on click', () => {
+    let spy = spyOn(component.buttonClicked, 'emit')
+      .and.stub();
+    let item = new Item('an item');
+    let column = new ListColumn('a column');
+    component.onButtonClick({} as MouseEvent, item, column);
+    expect(spy).toHaveBeenCalledWith({
+      target: item,
+      event: column.event
+    });
+  });
+
+  it('should not render options if none are given', () => {
     const compiled = fixture.debugElement.children[0].nativeElement;
     expect(compiled.querySelector('td.options')).toBeNull();
   });
@@ -178,16 +228,79 @@ describe('ListComponent', () => {
 });
 
 describe('ListColumn', () => {
+  let column: ListColumn;
+
+  beforeEach(() => {
+    column = new ListColumn('a column');
+  });
+
   it('should be constructed with a single argument', () => {
     const header = 'A Column'
     let col = new ListColumn(header);
     expect(col.header).toEqual(header);
-    expect(col.value).toEqual(header.toLowerCase());
+    expect(col.value).toEqual('a column');
+    expect(col.type).toEqual('string');
+    expect(col.event).toEqual('a_column');
+  });
+
+  it('should have a setable header and be dot chainable', () => {
+    let chained = column.setHeader('a header');
+    expect(column.header).toEqual('a header');
+    expect(chained).toBe(column);
+  });
+
+  it('should have a setable value and be dot chainable', () => {
+    let chained = column.setValue('a value');
+    expect(column.value).toEqual('a value');
+    expect(chained).toBe(column);
+  });
+
+  it('should have a setable type and be dot chainable', () => {
+    let chained = column.setType('button');
+    expect(column.type).toEqual('button');
+    expect(chained).toBe(column);
+  });
+
+  it('should have a setable event and be dot chainable', () => {
+    let chained = column.setEvent('event');
+    expect(column.event).toEqual('event');
+    expect(chained).toBe(column);
   });
 });
 
 describe('ListOption', () => {
+  let option: ListOption;
 
+  beforeEach(() => {
+    option = new ListOption('a column');
+  });
+
+  it('should be constructed with a single argument', () => {
+    const header = 'A Column'
+    let col = new ListColumn(header);
+    expect(col.header).toEqual(header);
+    expect(col.value).toEqual('a column');
+    expect(col.type).toEqual('string');
+    expect(col.event).toEqual('a_column');
+  });
+
+  it('should have a setable label and be dot chainable', () => {
+    let chained = option.setLabel('a label');
+    expect(option.label).toEqual('a label');
+    expect(chained).toBe(option);
+  });
+
+  it('should have a setable event and be dot chainable', () => {
+    let chained = option.setEvent('event');
+    expect(option.event).toEqual('event');
+    expect(chained).toBe(option);
+  });
+
+  it('should have a setable many and be dot chainable', () => {
+    let chained = option.setMany(true);
+    expect(option.many).toBeTruthy();
+    expect(chained).toBe(option);
+  });
 });
 
 @Component({

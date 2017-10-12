@@ -24,7 +24,7 @@ export class Error extends Response {
   public error: string;
 
   constructor(
-    code: number = 400,
+    public code: number = 400,
     public msg?: string
   ) {
     super(code);

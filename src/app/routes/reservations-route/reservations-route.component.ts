@@ -36,7 +36,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
   /** Options to be displayed by ListComponent for the list of reservations. **/
   public options: Array<ListOption> = [
     new ListOption('Edit'),
-    new ListOption('End').setMany(true),
+    new ListOption('End').setEvent('delete').setMany(true),
     new ListOption('Create Image'),
     new ListOption('Reboot').setMany(true),
     new ListOption('Reinstall').setMany(true)
@@ -50,7 +50,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     return this._reservationProvider.data;
   }
 
-  constructor(private _reservationProvider: ReservationProviderService,
+  constructor(public _reservationProvider: ReservationProviderService,
               public dialog: MdDialog) {
     // this._reservationProvider.next();
   }
@@ -118,8 +118,8 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     if (event.event === 'create') {
       this._openAddDialog();
     } else if (event.event === 'edit') {
-      this._editReservation(event.target);
-    } else if (event.event === 'end' || event.event === 'delete') {
+      this._openEditDialog(event.target);
+    } else if (event.event === 'delete') {
       this._deleteReservation(event.target);
     }
   }
@@ -135,7 +135,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
   /**
    * Opens an AddReservationDialogComponent for the user.
    */
-  private _openAddDialog(): void {
+  public _openAddDialog(): void {
     let dialogRef = this.dialog.open(AddReservationDialogComponent, {
       width: '450px',
       data: {}
@@ -149,7 +149,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
    * Opens an EditReservationDialogComponent for the user.
    * @param {Reservation} reservation The target reservation to edit.
    */
-  private _editReservation(reservation: Reservation): void {
+  public _openEditDialog(reservation: Reservation): void {
     let dialogRef = this.dialog.open(EditReservationDialogComponent, {
       width: '450px',
       data: { reservation: reservation }

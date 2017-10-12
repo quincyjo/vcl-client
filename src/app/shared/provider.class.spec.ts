@@ -1,13 +1,15 @@
 import { async } from '@angular/core/testing';
 import { Provider } from './provider.class';
 import { Idable } from './idable.interface';
-import { Response } from './response.class';
+import { Response, Error, Success } from './response.class';
 
 describe('Provider', () => {
   let provider: Provider<Item>;
+  let remote: MockRemoteDataSource<Item>;
 
   beforeEach(() => {
-    provider = new ItemProvider();
+    remote = new MockRemoteDataSource(ITEMS);
+    provider = new ItemProvider(remote);
   });
 
   it('should add an item', async(() => {
@@ -24,6 +26,20 @@ describe('Provider', () => {
       });
   }));
 
+  it('should reject on server error on add', async(() => {
+    remote.shouldReject = true;
+    let newItem: Item = new Item('value');
+    provider.add(newItem)
+      .then((result) => {
+        fail('Got valid responseon expected rejection');
+      })
+      .catch((error) => {
+        expect(error).toBeDefined();
+        expect(error.code).toBeDefined();
+        expect(error.error).toBeDefined();
+      });
+  }));
+
   it('should get an item', async(() => {
     provider.get(0)
       .then((result) => {
@@ -33,6 +49,37 @@ describe('Provider', () => {
       })
       .catch((error) => {
         fail(error);
+      });
+  }));
+
+  it('should update local to remote version on difference', () => {
+    let update = new Item('asdf');
+    update.id = 0;
+    remote.put(update)
+      .then((result) => {
+        provider.get(0)
+          .then((item) => {
+            expect(item.value).toEqual(update.value);
+          })
+          .catch((error) => {
+            fail(error);
+          });
+      })
+      .catch((error) => {
+        fail(error);
+      });
+  });
+
+  it('should reject on server error on get', async(() => {
+    remote.shouldReject = true;
+    provider.get(-1)
+      .then((result) => {
+        fail('Got valid responseon expected rejection');
+      })
+      .catch((error) => {
+        expect(error).toBeDefined();
+        expect(error.code).toBeDefined();
+        expect(error.error).toBeDefined();
       });
   }));
 
@@ -57,6 +104,20 @@ describe('Provider', () => {
       });
   }));
 
+  it('should reject on server error on put', async(() => {
+    remote.shouldReject = true;
+    let newItem: Item = new Item('value');
+    provider.put(newItem)
+      .then((result) => {
+        fail('Got valid responseon expected rejection');
+      })
+      .catch((error) => {
+        expect(error).toBeDefined();
+        expect(error.code).toBeDefined();
+        expect(error.error).toBeDefined();
+      });
+  }));
+
   it('should delete an item', async(() => {
     let target = ITEMS[0];
     provider.delete(target)
@@ -66,6 +127,20 @@ describe('Provider', () => {
       })
       .catch((error) => {
         fail(error);
+      });
+  }));
+
+  it('should reject on server error on delete', async(() => {
+    remote.shouldReject = true;
+    let newItem: Item = new Item('value');
+    provider.delete(newItem)
+      .then((result) => {
+        fail('Got valid responseon expected rejection');
+      })
+      .catch((error) => {
+        expect(error).toBeDefined();
+        expect(error.code).toBeDefined();
+        expect(error.error).toBeDefined();
       });
   }));
 
@@ -204,6 +279,7 @@ class Item {
 class MockRemoteDataSource<T extends Idable> {
   private _items: Array<T>;
   private _runningId: number;
+  public shouldReject: boolean;
 
   constructor(data?: Array<T>) {
     this._items = [];
@@ -215,45 +291,80 @@ class MockRemoteDataSource<T extends Idable> {
     }
   }
 
-  public add(item: T): Response {
-    item.id = this._runningId++;
-    this._items.push(item);
-    return {
-      id: item.id,
-      code: 201,
-    };
-  }
-
-  public get(id: number): T {
-    return this._items.find((elem) => {
-      return elem.id === id;
+  public add(item: T): Promise<Response> {
+    let promise = new Promise<Response>((resolve, reject) => {
+      if (this.shouldReject) {
+        reject(new Error());
+      } else {
+        item.id = this._runningId++;
+        this._items.push(item);
+        resolve({
+          id: item.id,
+          code: 201,
+        });
+      }
     });
+    return promise;
   }
 
-  public getRange(start: number = 0, length: number = 10): Array<T> {
-    return this._items.slice(start, start + length);
-  }
-
-  public put(item: T): T {
-    let target: T = this._items.find((elem) => {
-      return elem.id === item.id;
+  public get(id: number): Promise<T> {
+    let promise = new Promise<T>((resolve, reject) => {
+      if (this.shouldReject) {
+        reject(new Error());
+      } else {
+        resolve(this._items.find((elem) => {
+          return elem.id === id;
+        }));
+      }
     });
-    for (let key of Object.keys(item)) {
-      target[key] = item[key];
-    }
-    return target;
+    return promise;
   }
 
-  public delete(item: T): T {
-    let index: number = this._items.findIndex((elem) => {
-      return elem.id === item.id;
+  public put(item: T): Promise<T> {
+    let promise = new Promise<T>((resolve, reject) => {
+      if (this.shouldReject) {
+        reject(new Error());
+      } else {
+        let target: T = this._items.find((elem) => {
+          return elem.id === item.id;
+        });
+        for (let key of Object.keys(item)) {
+          target[key] = item[key];
+        }
+        resolve(target);
+      }
     });
-    if (index === -1) {
-      return undefined;
-    } else {
-      this._items.splice(index, 1);
-      return item;
-    }
+    return promise;
+  }
+
+  public delete(item: T): Promise<T> {
+    let promise = new Promise<T>((resolve, reject) => {
+      if (this.shouldReject) {
+        reject(new Error());
+      } else {
+        let index: number = this._items.findIndex((elem) => {
+          return elem.id === item.id;
+        });
+        if (index === -1) {
+          reject(undefined);
+        } else {
+          this._items.splice(index, 1);
+          resolve(item);
+        }
+      }
+    });
+    return promise;
+  }
+
+  public getRange(start: number = 0, length: number = 10): Promise<Array<T>> {
+    let promise = new Promise<Array<T>>((resolve, reject) => {
+      if (this.shouldReject) {
+        reject(new Error());
+      } else {
+        resolve(this._items.slice(start, start + length));
+      }
+    });
+    return promise;
   }
 }
 
@@ -262,44 +373,72 @@ class MockRemoteDataSource<T extends Idable> {
  * testing purposes.
  */
 class ItemProvider extends Provider<Item> {
-  private remote: MockRemoteDataSource<Item>;
 
-  constructor() {
+  constructor(public remote: MockRemoteDataSource<Item>) {
     super();
-    this.remote = new MockRemoteDataSource(ITEMS);
   }
 
   _addItem(item: Item): Promise<any> {
     let promise = new Promise<any>((resolve, reject) => {
-      resolve(this.remote.add(item));
+      this.remote.add(item)
+        .then((item) => {
+          resolve(item);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
 
   _getItem(id: number): Promise<Item> {
     let promise = new Promise<Item>((resolve, reject) => {
-      resolve(this.remote.get(id));
+      this.remote.get(id)
+        .then((item) => {
+          resolve(item);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
 
   _putItem(item: Item): Promise<Item> {
     let promise = new Promise<Item>((resolve, reject) => {
-      resolve(this.remote.put(item));
+      this.remote.put(item)
+        .then((item) => {
+          resolve(item);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
 
   _deleteItem(item: Item): Promise<Item> {
     let promise = new Promise<Item>((resolve, reject) => {
-      resolve(this.remote.delete(item))
+      this.remote.delete(item)
+        .then((item) => {
+          resolve(item);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
 
   _getFrom(start: number = 0, length: number = 10): Promise<Array<Item>> {
     let promise = new Promise((resolve, reject) => {
-      resolve(this.remote.getRange(start, length));
+      this.remote.getRange(start, length)
+        .then((items) => {
+          resolve(items);
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
     return promise;
   }
