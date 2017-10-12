@@ -36,10 +36,12 @@ export class AddReservationDialogComponent implements OnInit {
    * object which sould contain the target reservation to edit in the
    * 'reservation' attribute.
    */
-  constructor( public dialogRef: MdDialogRef<AddReservationDialogComponent>,
-              @Inject(MD_DIALOG_DATA) public data: any,
-              private _reservationProvider: ReservationProviderService,
-              private _formBuilder: FormBuilder) {
+  constructor(
+    public dialogRef: MdDialogRef<AddReservationDialogComponent>,
+    @Inject(MD_DIALOG_DATA) public data: any,
+    private _reservationProvider: ReservationProviderService,
+    private _formBuilder: FormBuilder
+  ) {
     this.durations = [];
     let start: number = 0.5;
     let end: number = 50 * 24;
@@ -57,7 +59,7 @@ export class AddReservationDialogComponent implements OnInit {
    */
   public printDuration(hours: number): string {
     if (hours < 1) {
-      return hours * 60 + ' min';
+      return Math.round(hours * 60) + ' min';
     }
     if (hours < 24) {
       return hours + ' hr';
@@ -100,7 +102,7 @@ export class AddReservationDialogComponent implements OnInit {
    */
   public onSubmit() {
     this.submitted = true;
-    this.dialogRef.close(this._makeReservation());
+    this.dialogRef.close(this.makeReservation());
   }
 
   /**
@@ -124,7 +126,7 @@ export class AddReservationDialogComponent implements OnInit {
    * `addReservationForm`.
    * @return {Reservation} The created Reservation object.
    */
-  private _makeReservation(): Reservation {
+  public makeReservation(): Reservation {
     let name = this.addReservationForm.get('env').value;
     let start = new Date(this.addReservationForm.get('start').value);
     let end = new Date(start);

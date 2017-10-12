@@ -11,6 +11,10 @@ import { AddReservationDialogComponent } from './add-reservation-dialog.componen
 
 class MockMdDialogRef {
   constructor() { }
+
+  public close(): void {
+
+  }
 }
 
 describe('AddReservationDialogComponent', () => {
@@ -50,5 +54,48 @@ describe('AddReservationDialogComponent', () => {
 
   it('should be created', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should print formatted duration', () => {
+    expect(component.printDuration(0.5)).toEqual('30 min');
+    expect(component.printDuration(1)).toEqual('1 hr');
+    expect(component.printDuration(2)).toEqual('2 hr');
+    expect(component.printDuration(24)).toEqual('1 day');
+    expect(component.printDuration(48)).toEqual('2 days');
+  });
+
+  it('should disable/enable duration slider on indefinite change', () => {
+    component.onIndefiniteChange({checked: false});
+    expect(component.addReservationForm.get('duration').enabled).toBeTruthy();
+    component.onIndefiniteChange({checked: true});
+    expect(component.addReservationForm.get('duration').enabled).toBeFalsy();
+  });
+
+  it('should close on the reservation on submit', () => {
+    let spy = spyOn(component.dialogRef, 'close')
+      .and.stub();
+    component.onSubmit();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should close on a null click', () => {
+    let spy = spyOn(component.dialogRef, 'close')
+      .and.stub();
+    component.onNoClick();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should make a reservation from the form', () => {
+    let form = component.addReservationForm;
+    let now = new Date();
+    let end = new Date(now);
+    end.setDate(end.getDate() + 1);
+    form.get('env').setValue('A reservation!');
+    form.get('start').setValue(now);
+    form.get('duration').setValue(24);
+    let reservation = component.makeReservation();
+    expect(reservation.name).toEqual('A reservation!');
+    expect(reservation.start).toEqual(now);
+    // expect(reservation.end).toEqual(end);
   });
 });

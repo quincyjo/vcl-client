@@ -8,6 +8,7 @@ import { MockBackendService } from '../../services/mock-backend.service';
 import { HttpClient } from '@angular/common/http';
 import { ListComponent } from '../../components/list/list.component';
 import { Reservation } from '../../shared/reservation.class';
+import { Observable } from 'rxjs';
 
 import { ReservationsRouteComponent } from './reservations-route.component';
 
@@ -54,6 +55,50 @@ describe('ReservationsRouteComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should catch error if can\'t load more', () => {
+    let spy = spyOn(component['_reservationProvider'], 'next')
+      .and.returnValue(Promise.reject('an error'));
+    component.loadMore()
+      .then((result) => {
+        fail('Got valid result on expected rejection.');
+      })
+      .catch((error) => {
+        expect(error).toEqual('an error');
+      });
+  });
+
+  it('should open an add dialog', () => {
+    let spy = spyOn(component.dialog, 'open')
+      .and.returnValue({
+        afterClosed: () => {
+          return Observable.of(9);
+        }
+      });
+    component._openAddDialog();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should open an edit dialog', () => {
+    let spy = spyOn(component.dialog, 'open')
+      .and.returnValue({
+        afterClosed: () => {
+          return Observable.of(9);
+        }
+      });
+    component._openEditDialog(undefined);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should should call provider to create a reservation', () => {
+    let spy = spyOn(component['_reservationProvider'], 'add')
+      .and.returnValue(Promise.resolve());
+    let res = new Reservation('asdf', new Date(), new Date());
+    component._addReservation(
+      res
+    );
+    expect(spy).toHaveBeenCalledWith(res);
+  });
+
   describe('list events', () => {
     it('should handle create by opening an add dialog', async(() => {
       let spy = spyOn(component, '_openAddDialog')
@@ -72,10 +117,25 @@ describe('ReservationsRouteComponent', () => {
 
     it('should handle delete by opening attempting to delete it', async(() => {
       let res = new Reservation('asdf', new Date(), new Date());
-      let spy = spyOn(component._reservationProvider, 'delete')
+      let spy = spyOn(component['_reservationProvider'], 'delete')
         .and.returnValue(Promise.resolve());
       component.handleListEvent({event: 'delete', target: res});
       expect(spy).toHaveBeenCalledWith(res);
     }));
+
+    it('should reject with provider error if deletion fails', () => {
+      let res = new Reservation('asdf', new Date(), new Date());
+      let spy = spyOn(component['_reservationProvider'], 'delete')
+        .and.returnValue(Promise.reject('an error'));
+      component.handleListEvent({event: 'delete', target: res});
+      expect(spy).toHaveBeenCalledWith(res);
+    });
+
+    it('should fire load more on onScrolledToBottom', () => {
+      let spy = spyOn(component, 'loadMore')
+        .and.stub();
+      component.onScrolledToBottom({});
+      expect(spy).toHaveBeenCalled();
+    });
   });
 });

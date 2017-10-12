@@ -50,7 +50,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     return this._reservationProvider.data;
   }
 
-  constructor(public _reservationProvider: ReservationProviderService,
+  constructor(private _reservationProvider: ReservationProviderService,
               public dialog: MdDialog) {
     // this._reservationProvider.next();
   }
@@ -175,7 +175,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
    * Submits a reservation to the service provider to be added.
    * @param {Reservation} reservation The reservation to add.
    */
-  private _addReservation(reservation: Reservation): void {
+  public _addReservation(reservation: Reservation): void {
     this._reservationProvider.add(reservation)
     .then((result) => {
       console.log(result);

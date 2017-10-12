@@ -11,6 +11,10 @@ import { EditReservationDialogComponent } from './edit-reservation-dialog.compon
 
 class MockMdDialogRef {
   constructor() { }
+
+  public close(): void {
+    
+  }
 }
 
 describe('EditReservationDialogComponent', () => {
@@ -60,4 +64,11 @@ describe('EditReservationDialogComponent', () => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('#reservationName').value).toContain('A reservation name!')
   }));
+
+  it('should close on a null click', () => {
+    let spy = spyOn(component.dialogRef, 'close')
+      .and.stub();
+    component.onNoClick();
+    expect(spy).toHaveBeenCalled();
+  });
 });
