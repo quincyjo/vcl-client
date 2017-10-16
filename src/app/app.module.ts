@@ -27,6 +27,9 @@ import { ImagesRouteComponent } from './routes/images-route/images-route.compone
 import { ListComponent } from './components/list/list.component';
 
 import 'hammerjs';
+import { GroupsRouteComponent } from './routes/groups-route/groups-route.component';
+import { SchedulesRouteComponent } from './routes/schedules-route/schedules-route.component';
+import { ComputersRouteComponent } from './routes/computers-route/computers-route.component';
 
 let http: any
   = environment.production
@@ -57,6 +60,21 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'groups',
+    component: GroupsRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'schedules',
+    component: SchedulesRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'computers',
+    component: ComputersRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'home',
     component: HomeRouteComponent,
     canActivate: [AuthGuard]
@@ -75,7 +93,10 @@ const routes: Routes = [
     NavigationComponent,
     NavItemComponent,
     ImagesRouteComponent,
-    ListComponent
+    ListComponent,
+    GroupsRouteComponent,
+    SchedulesRouteComponent,
+    ComputersRouteComponent
   ],
   entryComponents: [
     AddReservationDialogComponent,

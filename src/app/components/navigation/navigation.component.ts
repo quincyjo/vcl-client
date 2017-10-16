@@ -26,9 +26,21 @@ export class NavigationComponent {
       label: 'Manage',
       sub: [
         {
+          label: 'Groups',
+          routerLink: ['./groups']
+        },
+        {
           label: 'Images',
           routerLink: ['./images']
-        }
+        },
+        {
+          label: 'Schedules',
+          routerLink: ['./schedules']
+        },
+        {
+          label: 'Computers',
+          routerLink: ['./computers']
+        },
       ]
     }
   };
