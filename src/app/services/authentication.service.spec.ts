@@ -1,4 +1,5 @@
 import { TestBed, inject, async } from '@angular/core/testing';
+import { User, USERS } from './USERS';
 
 import { AuthenticationService } from './authentication.service';
 
@@ -43,7 +44,7 @@ describe('AuthenticationService', () => {
     service.authenticate(robby)
     .then((result) => {
       expect(result).toBeFalsy();
-    })
+    });
   })));
 
   it('should reject with if user is invalid', async(inject([AuthenticationService], (service: AuthenticationService) => {
@@ -71,5 +72,29 @@ describe('AuthenticationService', () => {
     .then((result) => {
       expect(result).toBeFalsy();
     })
+  })));
+
+  it('should get the current username or \'Not Logged In\'', async(inject([AuthenticationService], (service: AuthenticationService) => {
+    expect(service.username).toEqual('Not Logged In');
+    let user = USERS[0];
+    service.authenticate(user)
+      .then(() => {
+        expect(service.username).toEqual('robby');
+      });
+  })));
+
+  it('should logout', async(inject([AuthenticationService], (service: AuthenticationService) => {
+    let user = USERS[0];
+    service.authenticate(user)
+      .then(() => {
+        service.logout()
+          .then((result) => {
+            expect(service['_activeUser']).toBeUndefined();
+            expect(service['_token']).toBeUndefined();
+          })
+          .catch((error) => {
+            fail(error);
+          });
+      });
   })));
 });
