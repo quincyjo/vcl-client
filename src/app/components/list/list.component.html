@@ -31,7 +31,8 @@
     <button md-icon-button
       mdTooltip="More options..."
       [disabled]="!selected.length"
-      [mdMenuTriggerFor]="moreMenu">
+      [mdMenuTriggerFor]="moreMenu"
+      *ngIf="manyOptions.length">
       <md-icon>more_horiz</md-icon>
     </button>
   </div>
