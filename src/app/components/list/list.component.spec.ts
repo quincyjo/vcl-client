@@ -121,6 +121,50 @@ describe('ListComponent', () => {
     })
   });
 
+  describe('#onColumnClick', () => {
+    it('should set false to inc', () => {
+      component.onColumnClick(undefined, wrapper.columns[0]);
+      expect(wrapper.columns[0].sorted).toEqual('inc');
+    });
+
+    it('should set inc to dec', () => {
+      wrapper.columns[0].sorted = 'inc'
+      component.onColumnClick(undefined, wrapper.columns[0]);
+      expect(wrapper.columns[0].sorted).toEqual('dec');
+    });
+
+    it('should set dec to false', () => {
+      wrapper.columns[0].sorted = 'dec'
+      component.onColumnClick(undefined, wrapper.columns[0]);
+      expect(wrapper.columns[0].sorted).toBeFalsy();
+    });
+
+    it('should unsort all others', () => {
+      // TODO
+    });
+
+    it('should be default order if not sorted', () => {
+      for(let i = 0; i < component.sortedItems.length; i++) {
+        expect(component.sortedItems[i]).toBe(component.items[i]);
+      }
+    });
+
+    it('should sort in increasing order if inc', () => {
+      component.onColumnClick(undefined, wrapper.columns[0]);
+      for(let i = 0; i < component.sortedItems.length - 1; i++) {
+        expect(component.sortedItems[i].value).toBeGreaterThanOrEqual(component.sortedItems[i + 1].value);
+      }
+    });
+
+    it('should sort in decreasing order if dec', () => {
+      component.onColumnClick(undefined, wrapper.columns[0]);
+      component.onColumnClick(undefined, wrapper.columns[0]);
+      for(let i = 0; i < component.sortedItems.length - 1; i++) {
+        expect(component.sortedItems[i].value).toBeLessThanOrEqual(component.sortedItems[i + 1].value);
+      }
+    });
+  })
+
   it('should select all', () => {
     component.selectAll({checked: true});
     expect(component.selected.length).toEqual(component.items.length);

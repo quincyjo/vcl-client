@@ -17,11 +17,15 @@ export class ListComponent implements OnChanges {
   @Input() columns: Array<ListColumn> = [];
   /** The options to display if given, else option menues are not rendered. **/
   @Input() options: Array<ListOption> = [];
+  /** If the list should be sortable or not. **/
+  @Input() sortable: boolean = true;
 
   /** Output for when a button or option button is clicked. **/
   @Output() buttonClicked: EventEmitter<any>;
   /** Output for when the bottom of the list is scrolled to. **/
   @Output() scrolledToBottom: EventEmitter<any>;
+  /** Output for sort change to allow input update. **/
+  @Output() sortChange: EventEmitter<any>;
 
   /** ViewChild for the table of items. **/
   @ViewChild('table') table: ElementRef;
@@ -42,6 +46,27 @@ export class ListComponent implements OnChanges {
       let format: string = "%d item%s selected";
       return sprintf(format,
         this.selected.length, this.selected.length > 1 ? 's' : '');
+    }
+  }
+
+  /**
+   * The sorted items for sorted column or original order if no sort is set.
+   * @return {Array<any>} The order of items to display.
+   */
+  get sortedItems(): Array<any> {
+    let sort = this.columns.find((column) => {
+      return !!column.sorted;
+    });
+    if (!sort) {
+      return this.items;
+    } else {
+      return this.items.slice().sort((a, b) => {
+        if(this.print(a, sort.value, sort.type) < this.print(b, sort.value, sort.type)) {
+          return sort.sorted === 'inc' ? 1 : -1;
+        } else {
+          return sort.sorted === 'inc' ? -1 : 1;
+        }
+      });
     }
   }
 
@@ -67,6 +92,7 @@ export class ListComponent implements OnChanges {
     this.selected = [];
     this.buttonClicked = new EventEmitter();
     this.scrolledToBottom = new EventEmitter();
+    this.sortChange = new EventEmitter();
   }
 
   /**
@@ -103,6 +129,30 @@ export class ListComponent implements OnChanges {
   }
 
   /**
+   * Handles click events on the column headers for settings sorting settings
+   * and emits sortChange events to allow parent elements to update input.
+   * @param {MouseEvent} mouseEvent The mouse event that triggered the click.
+   * @param {ListColumn} column     The target column of the click.
+   */
+  public onColumnClick(mouseEvent: MouseEvent, column: ListColumn): void {
+    if (this.sortable) {
+      let target;
+      if (!column.sorted) {
+        target = 'inc';
+      } else if (column.sorted === 'inc') {
+        target = 'dec';
+      } else {
+        target = false;
+      }
+      for (let column of this.columns) {
+        column.sorted = false;
+      }
+      column.sorted = target;
+      this.sortChange.emit(column);
+    }
+  }
+
+  /**
    * Prints a value from an item based on the column value and type. will
    * convert values to proper strings to display.
    * @param  {any}    item The item which is being displayed.
@@ -120,7 +170,7 @@ export class ListComponent implements OnChanges {
     if (type === 'date'){
       return (new Date(value)).toLocaleString();
     } else {
-      return value !== undefined ? value.toString() : '';
+      return value !== undefined ? value: '';
     }
   }
 
@@ -236,6 +286,9 @@ export  type ListColumnType = 'string' | 'date' | 'button' | 'number' | undefine
  *                                  for onClick of button type columns.
  */
 export class ListColumn {
+  /** Status of the sorting value for the column. **/
+  public sorted: 'inc' | 'dec' | boolean;
+
   constructor(
     /** The header string for the column. **/
     public header: string,
@@ -245,7 +298,9 @@ export class ListColumn {
     public type: ListColumnType = 'string',
     /** The identifier string for events for the column. **/
     public event: string = value.toLowerCase().replace(' ', '_')
-  ) { }
+  ) {
+    this.sorted = false;
+  }
 
   /**
    * Sets the header attribtue of the column.

@@ -54,8 +54,16 @@
         [ngClass]="{
           number: column.type === 'number'
         }"
+        (click)="onColumnClick($event, column)"
         *ngFor="let column of columns">
         {{column.header}}
+        <span
+          class="icon-container"
+          *ngIf="column.sorted">
+          <md-icon class="icon sorted">
+            {{column.sorted === 'inc' ? 'arrow_drop_up' : 'arrow_drop_down'}}
+          </md-icon>
+        </span>
       </th>
       <th class="cell header icon"
         *ngIf="options.length">
@@ -70,7 +78,7 @@
       [ngClass]="{
         selected: item.selected
       }"
-      *ngFor="let item of items">
+      *ngFor="let item of sortedItems">
       <td class="cell icon select"
         *ngIf="selectable">
         <md-checkbox

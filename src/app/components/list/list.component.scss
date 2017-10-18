@@ -12,9 +12,26 @@ $primary-color: #3F51B5;
       font-weight: normal;
       text-align: left;
       color: rgba(0,0,0,0.8);
+      position: relative;
+
+      $sorted-icon-size: 1.5em;
+      .icon-container {
+        height: 100%;
+
+        .icon {
+          font-size: $sorted-icon-size;
+          height: $sorted-icon-size;
+        }
+      }
 
       &.number {
         text-align: right;
+
+        .icon-container {
+          position: absolute;
+          right: -1em;
+          top: 10px;
+        }
       }
     }
   }
