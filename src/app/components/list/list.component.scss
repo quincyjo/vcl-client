@@ -33,6 +33,10 @@ $primary-color: #3F51B5;
           top: 10px;
         }
       }
+
+      &.sortable {
+        cursor: pointer;
+      }
     }
   }
 

@@ -135,7 +135,7 @@ export class ListComponent implements OnChanges {
    * @param {ListColumn} column     The target column of the click.
    */
   public onColumnClick(mouseEvent: MouseEvent, column: ListColumn): void {
-    if (this.sortable) {
+    if (this.sortable && column.type != 'button') {
       let target;
       if (!column.sorted) {
         target = 'inc';

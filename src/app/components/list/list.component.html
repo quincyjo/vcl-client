@@ -52,7 +52,8 @@
       </th>
       <th class="cell header"
         [ngClass]="{
-          number: column.type === 'number'
+          number: column.type === 'number',
+          sortable: sortable && column.type != 'button'
         }"
         (click)="onColumnClick($event, column)"
         *ngFor="let column of columns">
