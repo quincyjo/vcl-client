@@ -1,6 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
 
 import { ListComponent, ListOption, ListColumnType, ListColumn } from './list.component';
 
@@ -12,7 +14,9 @@ describe('ListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        MaterialModule
+        MaterialModule,
+        BrowserAnimationsModule,
+        FormsModule
       ],
       declarations: [
         ListComponent,
@@ -163,7 +167,33 @@ describe('ListComponent', () => {
         expect(component.sortedItems[i].value).toBeLessThanOrEqual(component.sortedItems[i + 1].value);
       }
     });
-  })
+  });
+
+  describe('sortedItem', () => {
+    it('should filter based on filter and filterText', () => {
+      component.filterText = 'Item1';
+      fixture.detectChanges();
+      expect(component.sortedItems.length).toEqual(1);
+    });
+
+    it('should ignore case', () => {
+      component.filterText = 'iTEM1';
+      fixture.detectChanges();
+      expect(component.sortedItems.length).toEqual(1);
+    });
+
+    it('should find a partial match', () => {
+      component.filterText = '1';
+      fixture.detectChanges();
+      expect(component.sortedItems.length).toEqual(1);
+    });
+
+    it('should find partials', () => {
+      component.filterText = 'item';
+      fixture.detectChanges();
+      expect(component.sortedItems.length).toEqual(wrapper.items.length);
+    });
+  });
 
   it('should select all', () => {
     component.selectAll({checked: true});
@@ -310,6 +340,18 @@ describe('ListColumn', () => {
     expect(column.event).toEqual('event');
     expect(chained).toBe(column);
   });
+
+  it('should be hidable', () => {
+    let chained = column.hide();
+    expect(column.hidden).toBeTruthy();
+    expect(chained).toBe(column);
+  });
+
+  it('should be showable', () => {
+    let chained = column.show();
+    expect(column.hidden).toBeFalsy();
+    expect(chained).toBe(column);
+  });
 });
 
 describe('ListOption', () => {
@@ -355,6 +397,7 @@ describe('ListOption', () => {
       [columns]="columns"
       [options]="options"
       [selectable]="isSelectable"
+      [filter]="filter"
       [items]="items">
     </vcl-list>
   `
@@ -367,6 +410,7 @@ class TestComponentWrapper {
   public columns: Array<ListColumn>;
   public options: Array<ListOption>;
   public isSelectable: boolean;
+  public filter = 'value';
 
   constructor() {
     this.options = [];
@@ -384,6 +428,7 @@ class TestComponentWrapper {
       this.items[i].id = i;
     }
     this.columns = [
+      new ListColumn('id'),
       new ListColumn('Value')
     ];
   }

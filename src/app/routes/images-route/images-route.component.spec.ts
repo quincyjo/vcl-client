@@ -1,7 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import { ImagesRouteComponent } from './images-route.component';
 import { ListComponent } from '../../components/list/list.component';
@@ -22,7 +24,9 @@ describe('ImagesRouteComponent', () => {
         ListComponent
       ],
       imports: [
-        MaterialModule
+        FormsModule,
+        MaterialModule,
+        BrowserAnimationsModule
       ],
       providers: [
         ImageProviderService,

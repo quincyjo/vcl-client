@@ -19,6 +19,8 @@ export class ListComponent implements OnChanges {
   @Input() options: Array<ListOption> = [];
   /** If the list should be sortable or not. **/
   @Input() sortable: boolean = true;
+  /** Filter attribute for text filtering. Not displayed if falsy. **/
+  @Input() filter: string | false = 'name';
 
   /** Output for when a button or option button is clicked. **/
   @Output() buttonClicked: EventEmitter<any>;
@@ -32,6 +34,8 @@ export class ListComponent implements OnChanges {
 
   /** Array containing the currently selected items. **/
   public selected: Array<any>;
+
+  public filterText: string = '';
 
   /**
    * The title to display at the top of the list. If no items are selected than
@@ -58,15 +62,26 @@ export class ListComponent implements OnChanges {
       return !!column.sorted;
     });
     if (!sort) {
-      return this.items;
+      return this.items.slice()
+        .filter((elem) => {
+          return (this.filterText
+            ? this.print(elem, this.filter).toLowerCase().includes(this.filterText.toLowerCase())
+            : true);
+        });
     } else {
-      return this.items.slice().sort((a, b) => {
-        if(this.print(a, sort.value, sort.type) < this.print(b, sort.value, sort.type)) {
-          return sort.sorted === 'inc' ? 1 : -1;
-        } else {
-          return sort.sorted === 'inc' ? -1 : 1;
-        }
-      });
+      return this.items.slice()
+        .filter((elem) => {
+          return (this.filterText
+            ? this.print(elem, this.filter).toLowerCase().includes(this.filterText.toLowerCase())
+            : true);
+        })
+        .sort((a, b) => {
+          if(this.print(a, sort.value, sort.type) < this.print(b, sort.value, sort.type)) {
+            return sort.sorted === 'inc' ? 1 : -1;
+          } else {
+            return sort.sorted === 'inc' ? -1 : 1;
+          }
+        });
     }
   }
 
@@ -288,6 +303,8 @@ export  type ListColumnType = 'string' | 'date' | 'button' | 'number' | undefine
 export class ListColumn {
   /** Status of the sorting value for the column. **/
   public sorted: 'inc' | 'dec' | boolean;
+  /** Whether the column is hidden or not. **/
+  public hidden: boolean;
 
   constructor(
     /** The header string for the column. **/
@@ -300,6 +317,7 @@ export class ListColumn {
     public event: string = value.toLowerCase().replace(' ', '_')
   ) {
     this.sorted = false;
+    this.hidden = false;
   }
 
   /**
@@ -339,6 +357,24 @@ export class ListColumn {
    */
   public setEvent(event: string): ListColumn {
     this.event = event;
+    return this;
+  }
+
+  /**
+   * Hides the column from the list.
+   * @return {ListColumn} The ListColumn object.
+   */
+  public hide(): ListColumn {
+    this.hidden = true;
+    return this;
+  }
+
+  /**
+   * Shows the column from the list.
+   * @return {ListColumn} The ListColumn object.
+   */
+  public show(): ListColumn {
+    this.hidden = false;
     return this;
   }
 }

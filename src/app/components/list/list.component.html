@@ -1,3 +1,11 @@
+<md-form-field>
+  <input mdInput id="filterText" placeholder="Search" type="text" [(ngModel)]="filterText" />
+</md-form-field>
+<md-checkbox
+  [(ngModel)]="column.hidden"
+  *ngFor="let column of columns">
+  {{column.header}}
+</md-checkbox>
 <div id="header"
   [ngClass]="{
     selected: selected.length
@@ -55,6 +63,7 @@
           number: column.type === 'number',
           sortable: sortable && column.type != 'button'
         }"
+        [hidden]="column.hidden"
         (click)="onColumnClick($event, column)"
         *ngFor="let column of columns">
         {{column.header}}
@@ -93,6 +102,7 @@
           number: column.type === 'number'
         }"
         [ngSwitch]="column.type"
+        [hidden]="column.hidden"
         *ngFor="let column of columns">
         <span *ngSwitchCase="'button'">
           <button md-button
