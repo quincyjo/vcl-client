@@ -1,9 +1,10 @@
 import { TestBed, inject, async } from '@angular/core/testing';
 
-import { ArrayModel, MockBackendService, RESERVATIONS, IMAGES } from './mock-backend.service';
+import { ArrayModel, MockBackendService, RESERVATIONS, IMAGES, USER_GROUPS } from './mock-backend.service';
 import { Error, Success } from '../shared/response.class';
 import { Reservation } from '../shared/reservation.class';
 import { Image } from '../shared/image.class';
+import { UserGroup } from '../shared/user-group.class';
 import { HttpParams } from '@angular/common/http';
 
 describe('MockBackendService', () => {
@@ -32,20 +33,6 @@ describe('MockBackendService', () => {
           });
     })));
 
-    it('it should get images', async(inject([MockBackendService], (service: MockBackendService) => {
-      let url: string = '/api/images';
-      service.get<Array<Reservation>>(url)
-        .subscribe(
-          (result) => {
-            expect(result).toBeDefined();
-            expect(Array.isArray(result)).toBeTruthy();
-            expect(result.length).toEqual(IMAGES.length);
-          },
-          (error) => {
-            fail(error);
-          });
-    })));
-
     it('it should get a reservation', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/reservations/0';
       service.get<Reservation>(url)
@@ -61,6 +48,20 @@ describe('MockBackendService', () => {
         )
     })));
 
+    it('it should get images', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/images';
+      service.get<Array<Reservation>>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(Array.isArray(result)).toBeTruthy();
+            expect(result.length).toEqual(IMAGES.length);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
     it('it should get an image', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/images/0';
       service.get<Reservation>(url)
@@ -72,9 +73,37 @@ describe('MockBackendService', () => {
           },
           (error) => {
             fail(error);
-          }
-        )
+          });
     })));
+
+    it('it should get user groups', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/usergroups';
+      service.get<Array<UserGroup>>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(Array.isArray(result)).toBeTruthy();
+            expect(result.length).toEqual(USER_GROUPS.length);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should get a user group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/usergroups/0';
+      service.get<UserGroup>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.id).toEqual(0);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
 
     it('should accept a descriptor', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/reservations';

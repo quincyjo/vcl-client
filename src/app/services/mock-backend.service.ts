@@ -5,6 +5,7 @@ import { Image } from '../shared/image.class';
 import { User } from '../shared/user.class';
 import { ImageType } from '../shared/image-type.class';
 import { OS } from '../shared/os.class';
+import { UserGroup } from '../shared/user-group.class';
 import { Platform } from '../shared/platform.class';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
@@ -34,6 +35,9 @@ export class MockBackendService {
   /** Internal ArrayModel for stored platforms. **/
   private _oses: ArrayModel<OS>;
 
+  /** Internal ArrayModel for user groups. **/
+  private _userGroups: ArrayModel<UserGroup>;
+
   /** Maps an url to available endpoints. **/
   private urlMap: any;
 
@@ -44,6 +48,7 @@ export class MockBackendService {
     this._imagetypes = new ArrayModel<ImageType>(IMAGE_TYPES);
     this._platforms = new ArrayModel<Platform>(PLATFORMS);
     this._oses = new ArrayModel<OS>(OSES);
+    this._userGroups = new ArrayModel<UserGroup>(USER_GROUPS);
     this.urlMap = {
       'api': {
         'images': {
@@ -141,6 +146,30 @@ export class MockBackendService {
         } else {
           return Observable.of(JSON.parse(JSON.stringify(this._images.data)));
         }
+      } else if (path[1] === 'usergroups') {
+        if (path[2]) {
+            let id = parseInt(path[2]);
+            if (!isNaN(id) && this._userGroups.get(id)) {
+              let group = this._userGroups.get(id);
+              return Observable.of(JSON.parse(JSON.stringify(group)));
+            } else if (isNaN(id)){
+              return Observable.throw(new Error(CODE.BAD_REQUEST));
+            } else {
+              return Observable.throw(new Error(CODE.NOT_FOUND));
+            }
+        } else if(options && options.params) {
+          let params: HttpParams = options.params as HttpParams;
+          let processOptions: ProcessOptions = {
+            descriptor: JSON.parse(params.get('descriptor')),
+            start: parseInt(params.get('start')),
+            length: parseInt(params.get('length')),
+            orderBy: params.has('orderBy') && params.get('orderBy').charAt(0) === '[' ? JSON.parse(params.get('orderBy')) : params.get('orderBy')
+          };
+          let results: Array<UserGroup> = this._processResults(this._userGroups.data, processOptions);
+          return Observable.of(JSON.parse(JSON.stringify(results)));
+        } else {
+          return Observable.of(JSON.parse(JSON.stringify(this._userGroups.data)));
+        }
       } else {
         // Not a vliad API endpoint.
         return Observable.throw(new Error(CODE.BAD_REQUEST));
@@ -201,6 +230,7 @@ export class MockBackendService {
     }
     if (path[0] === 'api') {
       if (path[1] === 'reservations'
+        ||path[1] === 'usergroups'
         ||path[1] === 'images') {
         if (!body) {
           // Data object was not provided, invalid method call.
@@ -214,6 +244,10 @@ export class MockBackendService {
             let target: Image = body as Image;
             let model = this._images;
             return Observable.of(this._addToModel<Image>(model, target));
+          } else if (path[1] === 'usergroups') {
+            let target: UserGroup = body as UserGroup;
+            let model = this._userGroups;
+            return Observable.of(this._addToModel<UserGroup>(model, target));
           }
         }
       } else {
@@ -288,6 +322,20 @@ export class MockBackendService {
         } else {
           return Observable.throw(new Error(CODE.NOT_ALLOWED));
         }
+      } else if (path[1] === 'usergroups') {
+        let group: UserGroup = body as UserGroup;
+        if (!isNaN(parseInt(path[2])) && group) {
+          group.id = parseInt(path[2]);
+          if (this._userGroups.put(group)) {
+            // Target reservaiton was successfully updated.
+            return Observable.of(new Success(CODE.CREATED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
       } else {
         // Not a vliad API endpoint.
         return Observable.throw(new Error(CODE.BAD_REQUEST));
@@ -328,6 +376,19 @@ export class MockBackendService {
         if (path[2]) {
           let id: number = parseInt(path[2]);
           if (!isNaN(id) && this._images.delete(id)) {
+            // Target reservation successfully deleted.
+            return Observable.of(new Success(CODE.DELETED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
+      } else if (path[1] === 'usergroups') {
+        if (path[2]) {
+          let id: number = parseInt(path[2]);
+          if (!isNaN(id) && this._userGroups.delete(id)) {
             // Target reservation successfully deleted.
             return Observable.of(new Success(CODE.DELETED));
           } else {
@@ -603,6 +664,11 @@ export const PLATFORMS: Array<Platform> = [
 /** Constant OSes list for initially stored OSes. **/
 export const OSES: Array<OS> = [
   new OS('windows_7', 'Windows 7', 'windows')
+];
+
+/** Constant UserGroups list for initially stored user groups. **/
+export const USER_GROUPS: Array<UserGroup> = [
+  new UserGroup('Admins')
 ];
 
 /** Constant for supported reservation types. **/

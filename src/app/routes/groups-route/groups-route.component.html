@@ -1,3 +1,10 @@
-<p>
-  groups-route works!
-</p>
+<vcl-list
+  [title]="'User Groups'"
+  [selectable]="true"
+  [items]="userGroups"
+  [options]="listOptions"
+  [columns]="listColumns"
+  (buttonClicked)="handleListEvent($event)"
+  (scrolledToBottom)="onScrolledToBottom($event)"
+  #list>
+</vcl-list>

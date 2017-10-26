@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { AuthenticationService } from './services/authentication.service';
 import { ReservationProviderService } from './services/reservation-provider.service';
 import { ImageProviderService } from './services/image-provider.service';
+import { UserGroupProviderService } from './services/user-group-provider.service';
 import { MockBackendService } from './services/mock-backend.service';
 
 import { LoginRouteComponent } from './routes/login-route/login-route.component';
@@ -96,7 +97,8 @@ const routes: Routes = [
     ListComponent,
     GroupsRouteComponent,
     SchedulesRouteComponent,
-    ComputersRouteComponent
+    ComputersRouteComponent,
+    FilterSelectorComponent
   ],
   entryComponents: [
     AddReservationDialogComponent,
@@ -117,6 +119,7 @@ const routes: Routes = [
     AuthenticationService,
     ReservationProviderService,
     ImageProviderService,
+    UserGroupProviderService,
     AuthGuard,
     http
   ],
