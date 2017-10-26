@@ -8,8 +8,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provider } from '../shared/provider.class';
 import { Response } from '../shared/response.class';
 
+/**
+ * Concrete provider implementation of Provider for reservations.
+ */
 @Injectable()
 export class ReservationProviderService extends Provider<Reservation> {
+  /** API endpoint for reservations. **/
   private reservationsEndpoint: string = '/api/reservations';
 
   constructor(private _http: HttpClient) {

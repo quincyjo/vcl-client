@@ -4,6 +4,7 @@ import { Idable } from './idable.interface';
  * Class which contains the information for a user group.
  */
 export class UserGroup implements Idable {
+  /** The remote id. **/
   public id: number;
 
   constructor(

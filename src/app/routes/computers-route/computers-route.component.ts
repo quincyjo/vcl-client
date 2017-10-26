@@ -12,7 +12,10 @@ export class ComputersRouteComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  /**
+   * OnInit Angular life cycle hook.
+   */
+  public ngOnInit(): void {
   }
 
 }

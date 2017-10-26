@@ -24,6 +24,7 @@ export class Error extends Response {
   public error: string;
 
   constructor(
+    /** The code for the error. **/
     public code: number = 400,
     public msg?: string
   ) {
@@ -73,7 +74,7 @@ export class Success extends Response {
   /** Id of the targeted content for PUT, POST, and DELETE requests. **/
 
   constructor(
-    code: number = 200,
+    public code: number = 200,
     public msg?: string
   ) {
     super(code);

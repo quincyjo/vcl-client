@@ -12,13 +12,16 @@ import { UserGroup } from '../../shared/user-group.class';
   styleUrls: ['./groups-route.component.scss']
 })
 export class GroupsRouteComponent implements OnInit {
+  /** The user groups for the route. **/
   public userGroups: Array<UserGroup>;
 
+  /** The columns to display in the ListComponent. **/
   public listColumns: Array<ListColumn> = [
     new ListColumn('name'),
     new ListColumn('id'),
   ];
 
+  /** The options to display in the ListComponent. **/
   public listOptions: Array<ListOption> = [
     new ListOption('Edit')
   ];
@@ -27,15 +30,26 @@ export class GroupsRouteComponent implements OnInit {
     this.userGroups = [];
   }
 
+  /**
+   * Event handler for ListComponent events.
+   * @param {any} event The ListComponent event.
+   */
   public handleListEvent(event: any): void {
     console.log(event);
   }
 
+  /**
+   * Event handler for when the user scrolls to the bottom of the list.
+   * @param {any} event The event.
+   */
   public onScrolledToBottom(event: any): void {
     console.log(event);
   }
 
-  ngOnInit() {
+  /**
+   * OnInit Angular life cycle hook. Fetches user groups from the provider.
+   */
+  public ngOnInit(): void {
     this._provider.get(0)
       .then((group) => {
         this.userGroups.push(group);

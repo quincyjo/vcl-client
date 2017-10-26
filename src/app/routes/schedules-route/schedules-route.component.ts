@@ -12,6 +12,9 @@ export class SchedulesRouteComponent implements OnInit {
 
   constructor() { }
 
+  /**
+   * OnInit Angular life cycle hook.
+   */
   ngOnInit() {
   }
 
