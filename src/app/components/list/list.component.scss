@@ -75,7 +75,7 @@ $primary-color: #3F51B5;
       font-size: 0.9em;
       text-overflow: ellipsis;
       max-width: 100px;
-      & > div {
+      & > * {
         max-width: 100em;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -170,6 +170,19 @@ $primary-color: #3F51B5;
       opacity: 1;
       max-width: 100px;
     }
+  }
+}
+
+#filter-container {
+  padding: 0 25px;
+  overflow: hidden;
+  max-height: 0px;
+  opacity: 0;
+  transition: all 0.25s linear;
+
+  &.show {
+    max-height: 200px;
+    opacity: 1;
   }
 }
 

@@ -1,17 +1,29 @@
-<md-form-field>
-  <input mdInput id="filterText" placeholder="Search" type="text" [(ngModel)]="filterText" />
-</md-form-field>
-<md-checkbox
-  [(ngModel)]="column.hidden"
-  *ngFor="let column of columns">
-  {{column.header}}
-</md-checkbox>
+<div id="filter-container"
+  [ngClass]="{
+    show: showFilter
+  }"
+  *ngIf="generateFilterSelector">
+  <vcl-filter-selector
+    (onChange)="onFilterSelectorChange($event)"
+    [filters]="filters"
+    [disabled]="!showFilter"
+    #filterSelector>
+  </vcl-filter-selector>
+</div>
 <div id="header"
   [ngClass]="{
     selected: selected.length
   }">
   <h2 class="title">{{tableTitle}}</h2>
   <div class="new">
+    <button md-icon-button
+      id="filter-toggle"
+      class="button toggle icon"
+      [mdTooltip]="(showFilter ? 'Hide' : 'Show') + ' filters'"
+      (click)="toggleFilter()"
+      *ngIf="generateFilterSelector">
+      <md-icon>search</md-icon>
+    </button>
     <button md-button
       class="button"
       color="primary"
@@ -51,7 +63,7 @@
       [ngClass]="{
         selected: isAllSelected
       }">
-      <th class="cell header icon"
+      <th id="select-all" class="cell header icon"
         *ngIf="selectable">
         <md-checkbox
           [checked]="isAllSelected"
@@ -93,7 +105,9 @@
         *ngIf="selectable">
         <md-checkbox
           (change)="onSelectedChange($event, item)"
-          [(ngModel)]="item.selected">
+          (click)="onCheckboxClick($event, item)"
+          [(ngModel)]="item.selected"
+          #box>
         </md-checkbox>
       </td>
       <td class="cell"

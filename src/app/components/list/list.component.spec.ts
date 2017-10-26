@@ -2,9 +2,10 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ListComponent, ListOption, ListColumnType, ListColumn } from './list.component';
+import { FilterSelectorComponent } from './filter-selector/filter-selector.component';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -16,10 +17,12 @@ describe('ListComponent', () => {
       imports: [
         MaterialModule,
         BrowserAnimationsModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
       ],
       declarations: [
         ListComponent,
+        FilterSelectorComponent,
         TestComponentWrapper
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -55,6 +58,30 @@ describe('ListComponent', () => {
       wrapper.items = [];
       fixture.detectChanges();
       expect(component.items.length).toEqual(0);
+    });
+
+    it('should accept a selectable option', () => {
+      wrapper.isSelectable  = false;
+      fixture.detectChanges();
+      const compiled = fixture.debugElement.children[0].nativeElement;
+      expect(compiled.querySelector('#select-all')).toBeNull();
+      expect(compiled.querySelectorAll('.select').length).toEqual(0);
+      wrapper.isSelectable  = true;
+      fixture.detectChanges();
+      expect(compiled.querySelector('#select-all')).toBeDefined();
+      expect(compiled.querySelectorAll('.select').length).toEqual(wrapper.items.length);
+    });
+
+    it('should accept generateFilterSelector option', () => {
+      wrapper.generateFilterSelector = false;
+      fixture.detectChanges();
+      const compiled = fixture.debugElement.children[0].nativeElement;
+      expect(compiled.querySelector('#filter-container')).toBeNull();
+      expect(compiled.querySelector('#filter-toggle')).toBeNull();
+      wrapper.generateFilterSelector = true;
+      fixture.detectChanges();
+      expect(compiled.querySelector('#filter-container')).toBeDefined();
+      expect(compiled.querySelector('#filter-toggle')).toBeDefined();
     });
   });
 
@@ -169,29 +196,68 @@ describe('ListComponent', () => {
     });
   });
 
-  describe('sortedItem', () => {
-    it('should filter based on filter and filterText', () => {
-      component.filterText = 'Item1';
+  describe('filteredItems', () => {
+    it('should filter based on filter descriptor', () => {
+      component.filter = {
+          'value': 'Item1'
+      };
       fixture.detectChanges();
-      expect(component.sortedItems.length).toEqual(1);
+      expect(component.filteredItems.length).toEqual(1);
     });
 
     it('should ignore case', () => {
-      component.filterText = 'iTEM1';
+      component.filter = {
+          'value': 'iTEM1'
+      };
       fixture.detectChanges();
-      expect(component.sortedItems.length).toEqual(1);
+      expect(component.filteredItems.length).toEqual(1);
     });
 
     it('should find a partial match', () => {
-      component.filterText = '1';
+      component.filter = {
+          'value': '1'
+      };
       fixture.detectChanges();
-      expect(component.sortedItems.length).toEqual(1);
+      expect(component.filteredItems.length).toEqual(1);
     });
 
     it('should find partials', () => {
-      component.filterText = 'item';
+      component.filter = {
+          'value': 'item'
+      };
       fixture.detectChanges();
-      expect(component.sortedItems.length).toEqual(wrapper.items.length);
+      expect(component.filteredItems.length).toEqual(wrapper.items.length);
+    });
+  });
+
+  describe('sortedItem', () => {
+    it('should return all items in given order if no sort column', () => {
+      expect(component.sortedItems.length).toEqual(component.items.length);
+      for (let i = 0; i < component.items.length; i++) {
+        expect(component.sortedItems[i]).toBe(component.items[i]);
+      }
+    });
+
+    it('should inc sort by sorted column', () => {
+      wrapper.columns[0].sorted = 'inc';
+      fixture.detectChanges();
+      for (let i = 0; i < component.sortedItems.length; i++) {
+        for (let j = i + 1; j < component.sortedItems.length; j++) {
+          expect(component.print(component.sortedItems[i], wrapper.columns[0].value) >=
+            (component.print(component.sortedItems[j], wrapper.columns[0].value))).toBeTruthy();
+        }
+      }
+    });
+
+    it('should dec sort by sorted column', () => {
+      wrapper.columns[0].sorted = 'dec';
+      fixture.detectChanges();
+      for (let i = 0; i < component.sortedItems.length; i++) {
+        for (let j = i + 1; j < component.sortedItems.length; j++) {
+          expect(component.print(component.sortedItems[i], wrapper.columns[0].value) <=
+            (component.print(component.sortedItems[j], wrapper.columns[0].value))).toBeTruthy();
+        }
+      }
     });
   });
 
@@ -398,6 +464,7 @@ describe('ListOption', () => {
       [options]="options"
       [selectable]="isSelectable"
       [filter]="filter"
+      [generateFilterSelector]="generateFilterSelector"
       [items]="items">
     </vcl-list>
   `
@@ -410,7 +477,8 @@ class TestComponentWrapper {
   public columns: Array<ListColumn>;
   public options: Array<ListOption>;
   public isSelectable: boolean;
-  public filter = 'value';
+  public filter = {};
+  public generateFilterSelector: boolean;
 
   constructor() {
     this.options = [];

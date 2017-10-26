@@ -31,6 +31,7 @@ import 'hammerjs';
 import { GroupsRouteComponent } from './routes/groups-route/groups-route.component';
 import { SchedulesRouteComponent } from './routes/schedules-route/schedules-route.component';
 import { ComputersRouteComponent } from './routes/computers-route/computers-route.component';
+import { FilterSelectorComponent } from './components/list/filter-selector/filter-selector.component';
 
 let http: any
   = environment.production

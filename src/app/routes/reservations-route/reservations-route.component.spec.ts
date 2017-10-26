@@ -3,12 +3,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReservationProviderService } from '../../services/reservation-provider.service';
 import { MaterialModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MockBackendService } from '../../services/mock-backend.service';
 import { HttpClient } from '@angular/common/http';
 import { ListComponent } from '../../components/list/list.component';
 import { Reservation } from '../../shared/reservation.class';
 import { Observable } from 'rxjs';
+import { FilterSelectorComponent } from '../../components/list/filter-selector/filter-selector.component';
 
 import { ReservationsRouteComponent } from './reservations-route.component';
 
@@ -30,6 +31,7 @@ describe('ReservationsRouteComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ReservationsRouteComponent,
+        FilterSelectorComponent,
         ListComponent
       ],
       providers: [
@@ -39,7 +41,8 @@ describe('ReservationsRouteComponent', () => {
       imports: [
         MaterialModule,
         NoopAnimationsModule,
-        FormsModule
+        FormsModule,
+        ReactiveFormsModule
       ]
     })
     .compileComponents();

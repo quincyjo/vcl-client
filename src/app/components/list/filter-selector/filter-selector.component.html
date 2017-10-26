@@ -1,0 +1,6 @@
+<h2 class="title">Filter</h2>
+<form [formGroup]="filterForm" novalidate>
+  <md-form-field *ngFor="let filter of filters">
+    <input mdInput [placeholder]="filter.label" type="text" [formControlName]="filter.key" />
+  </md-form-field>
+</form>

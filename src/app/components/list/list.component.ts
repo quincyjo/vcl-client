@@ -1,5 +1,6 @@
 import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { sprintf } from 'sprintf-js';
+import { FilterSelectorComponent, FilterSelector } from './filter-selector/filter-selector.component';
 
 @Component({
   selector: 'vcl-list',
@@ -20,7 +21,14 @@ export class ListComponent implements OnChanges {
   /** If the list should be sortable or not. **/
   @Input() sortable: boolean = true;
   /** Filter attribute for text filtering. Not displayed if falsy. **/
-  @Input() filter: string | false = 'name';
+  @Input() filter: boolean | Object = true;
+  /** Whether the filter selector should be generated or not. Will be set true
+   * by default, or set to false if not set manually and `filter` is set to
+   * false.
+   */
+  @Input() generateFilterSelector: boolean;
+  /** Whether to show the filter selector or not if enabled. **/
+  @Input() showFilter: boolean;
 
   /** Output for when a button or option button is clicked. **/
   @Output() buttonClicked: EventEmitter<any>;
@@ -31,11 +39,14 @@ export class ListComponent implements OnChanges {
 
   /** ViewChild for the table of items. **/
   @ViewChild('table') table: ElementRef;
+  /** ViewChild for the filter selector. **/
+  @ViewChild('filterSelector') filterSelector: ElementRef;
 
   /** Array containing the currently selected items. **/
   public selected: Array<any>;
 
-  public filterText: string = '';
+  /** Filters generated from columns. **/
+  public filters: Array<FilterSelector> = [];
 
   /**
    * The title to display at the top of the list. If no items are selected than
@@ -62,19 +73,9 @@ export class ListComponent implements OnChanges {
       return !!column.sorted;
     });
     if (!sort) {
-      return this.items.slice()
-        .filter((elem) => {
-          return (this.filterText
-            ? this.print(elem, this.filter).toLowerCase().includes(this.filterText.toLowerCase())
-            : true);
-        });
+      return this.filteredItems;
     } else {
-      return this.items.slice()
-        .filter((elem) => {
-          return (this.filterText
-            ? this.print(elem, this.filter).toLowerCase().includes(this.filterText.toLowerCase())
-            : true);
-        })
+      return this.filteredItems
         .sort((a, b) => {
           if(this.print(a, sort.value, sort.type) < this.print(b, sort.value, sort.type)) {
             return sort.sorted === 'inc' ? 1 : -1;
@@ -82,6 +83,44 @@ export class ListComponent implements OnChanges {
             return sort.sorted === 'inc' ? -1 : 1;
           }
         });
+    }
+  };
+
+  /**
+   * Filteres the items according to the filtereing input of the list. If
+   * `filter` is defined either as a string or an object, this slices and
+   * filters the the items accordingly.
+   * @return {Array<any>} The filtered results.
+   */
+  get filteredItems(): Array<any> {
+    return this.items.slice()
+      .filter((elem) => {
+        for (let key of Object.keys(this.filter)) {
+          if (this.filter[key] && !this.print(elem, key).toString().toLowerCase()
+            .includes(
+              this.filter[key].toString().toLowerCase()
+            )){
+            return false;
+          }
+        }
+        return true;
+      });
+  }
+
+  /**
+   * Angular onInit life cycle hook. Generated filter selector input and Sets
+   * `generateFilterSelector` based on input.
+   */
+  ngOnInit(): void {
+    for (let column of this.columns) {
+      if (column.type !== 'button' && column.filterable && column.isVisible) {
+        this.filters.push(FilterSelector.fromListColumn(column));
+      }
+    }
+    if (this.filter !== true && this.generateFilterSelector === undefined) {
+      this.generateFilterSelector = false;
+    } else {
+      this.generateFilterSelector = true;
     }
   }
 
@@ -143,6 +182,10 @@ export class ListComponent implements OnChanges {
     if (bottom > number) this.scrolledToBottom.emit();
   }
 
+  public onFilterSelectorChange(value: any): void {
+    this.filter = value;
+  }
+
   /**
    * Handles click events on the column headers for settings sorting settings
    * and emits sortChange events to allow parent elements to update input.
@@ -200,6 +243,15 @@ export class ListComponent implements OnChanges {
   }
 
   /**
+   * Toggles the state of `showFilter`.
+   * @return {boolean} The new state of `showFilter`.
+   */
+  public toggleFilter(): boolean {
+    this.showFilter = !this.showFilter;
+    return this.showFilter;
+  }
+
+  /**
    * Selects the given reservation.
    * @param {Reservation} reservation The reservation to select.
    * @param {boolean}     state       Whether the reservation is selected or
@@ -209,12 +261,12 @@ export class ListComponent implements OnChanges {
     let index: number = this.selected.findIndex((elem) => {
       return elem.id === item.id;
     });
-    if (state && index === -1) {
+    if (state) {
       item['selected'] = true;
-      this.selected.push(item);
-    } else if (!state && index !== -1){
+      if (index === -1) this.selected.push(item);
+    } else if (!state){
       item['selected'] = false;
-      this.selected.splice(index, 1);
+      if (index !== -1) this.selected.splice(index, 1);
     }
   }
 
@@ -225,6 +277,35 @@ export class ListComponent implements OnChanges {
    */
   public onSelectedChange(event: any, item: any): void {
     this.selectItem(item, event.checked);
+  }
+
+  public lastItem: any;
+  public onCheckboxClick(event: MouseEvent, item: any): void {
+    // console.log(item);
+    // if (!event.shiftKey) {
+    //   this.selectItem(item, !item['selected']);
+    // }
+    if (this.lastItem && event.shiftKey && item.id !== this.lastItem.id) {
+      let target: boolean = this.lastItem.selected
+      let thisIndex = this.sortedItems.findIndex((elem) => {
+        return item.id === elem.id;
+      });
+      let lastIndex = this.sortedItems.findIndex((elem) => {
+        return this.lastItem.id === elem.id;
+      });
+      let start = thisIndex > lastIndex
+                ? lastIndex
+                : thisIndex;
+      let end = thisIndex > lastIndex
+              ? thisIndex - (target ? 0 : 1)
+              : lastIndex;
+      //  console.log(start, end);
+      for (let i = start; i <= end; i++) {
+        // console.log('setting id ' + this.sortedItems[i].id + ' to ' + target);
+        this.selectItem(this.sortedItems[i], target);
+      }
+    }
+    this.lastItem = item;
   }
 
   /**
@@ -305,6 +386,11 @@ export class ListColumn {
   public sorted: 'inc' | 'dec' | boolean;
   /** Whether the column is hidden or not. **/
   public hidden: boolean;
+  /** Whether the column is filterable or not. **/
+  public filterable: boolean;
+
+  /** If the column is visible or not. **/
+  get isVisible(): boolean { return !this.hidden; }
 
   constructor(
     /** The header string for the column. **/
@@ -318,6 +404,7 @@ export class ListColumn {
   ) {
     this.sorted = false;
     this.hidden = false;
+    this.filterable = true;
   }
 
   /**
@@ -375,6 +462,16 @@ export class ListColumn {
    */
   public show(): ListColumn {
     this.hidden = false;
+    return this;
+  }
+
+  /**
+   * Sets the `filterable` property of the column.
+   * @param  {boolean = true}        filterable The desired value.
+   * @return {ListColumn}   The ListColumn object.
+   */
+  public filter(filterable: boolean = true): ListColumn {
+    this.filterable = filterable;
     return this;
   }
 }

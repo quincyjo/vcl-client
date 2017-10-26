@@ -3,10 +3,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MaterialModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ImagesRouteComponent } from './images-route.component';
 import { ListComponent } from '../../components/list/list.component';
+import { FilterSelectorComponent } from '../../components/list/filter-selector/filter-selector.component';
 
 import { ImageProviderService } from '../../services/image-provider.service';
 import { MockBackendService } from '../../services/mock-backend.service';
@@ -21,10 +22,12 @@ describe('ImagesRouteComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         ImagesRouteComponent,
+        FilterSelectorComponent,
         ListComponent
       ],
       imports: [
         FormsModule,
+        ReactiveFormsModule,
         MaterialModule,
         BrowserAnimationsModule
       ],

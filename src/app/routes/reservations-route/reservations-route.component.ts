@@ -28,7 +28,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
   /** Columns to be displayed by ListComponent for the list of reservations. **/
   public columns: Array<ListColumn> = [
     new ListColumn('Name'),
-    new ListColumn('Ending', 'end', 'date'),
+    new ListColumn('Ending', 'end', 'date').filter(false),
     new ListColumn('ID').setType('number'),
     new ListColumn('', 'Connect', 'button')
   ];
