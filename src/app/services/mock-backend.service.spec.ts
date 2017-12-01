@@ -1,9 +1,10 @@
 import { TestBed, inject, async } from '@angular/core/testing';
 
-import { ArrayModel, MockBackendService, RESERVATIONS, IMAGES, USER_GROUPS } from './mock-backend.service';
+import { ArrayModel, MockBackendService, RESERVATIONS, IMAGES, USER_GROUPS, IMAGE_GROUPS } from './mock-backend.service';
 import { Error, Success } from '../shared/response.class';
 import { Reservation } from '../shared/reservation.class';
 import { Image } from '../shared/image.class';
+import { ImageGroup } from '../shared/image-group.class';
 import { UserGroup } from '../shared/user-group.class';
 import { HttpParams } from '@angular/common/http';
 
@@ -93,6 +94,34 @@ describe('MockBackendService', () => {
     it('it should get a user group', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/usergroups/0';
       service.get<UserGroup>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.id).toEqual(0);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should get image groups', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/imagegroups';
+      service.get<Array<ImageGroup>>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(Array.isArray(result)).toBeTruthy();
+            expect(result.length).toEqual(IMAGE_GROUPS.length);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should get an image group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/imagegroups/0';
+      service.get<ImageGroup>(url)
         .subscribe(
           (result) => {
             expect(result).toBeDefined();
@@ -323,7 +352,24 @@ describe('MockBackendService', () => {
             expect(typeof result).toEqual('object');
             expect(result.code).toEqual(201);
             expect(service['_images'].length).toEqual(IMAGES.length + 1);
-            expect(typeof result['id']).toEqual('number');
+            expect(typeof result['id']).not.toBeNaN();
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should add an image group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/imagegroups';
+      let newImageGroup: ImageGroup = new ImageGroup('A new image group');
+      service.post<Success>(url, newImageGroup)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(201);
+            expect(service['_imageGroups'].length).toEqual(IMAGE_GROUPS.length + 1);
+            expect(typeof result['id']).not.toBeNaN();
           },
           (error) => {
             fail(error);
@@ -410,7 +456,7 @@ describe('MockBackendService', () => {
             expect(result).toBeDefined();
             expect(typeof result).toEqual('object');
             expect(result.code).toEqual(201);
-            service.get<Reservation>(url)
+            service.get<Image>(url)
               .subscribe(
                 (result) => {
                   expect(result).toBeDefined();
@@ -425,6 +471,33 @@ describe('MockBackendService', () => {
           }
         )
     })));
+
+    it('it should update an image group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let id: number = 0;
+      let url: string = '/api/imagegroups/' + id;
+      let newImageGroup: ImageGroup = new ImageGroup('An edited image');
+      service.put<Success>(url, newImageGroup)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(201);
+            service.get<ImageGroup>(url)
+              .subscribe(
+                (result) => {
+                  expect(result).toBeDefined();
+                  expect(result.name).toEqual(newImageGroup.name);
+                },
+                (error) => {
+                  fail(error);
+                });
+          },
+          (error) => {
+            fail(error);
+          }
+        )
+    })));
+
 
     it('it should throw a 404 no reservation was found', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/reservations/4200';
@@ -533,6 +606,22 @@ describe('MockBackendService', () => {
             expect(typeof result).toEqual('object');
             expect(result.code).toEqual(204);
             expect(service['_images'].length).toEqual(IMAGES.length - 1);
+          },
+          (error) => {
+            fail(error);
+          }
+        )
+    })));
+
+    it('it should delete an image group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/imagegroups/0';
+      service.delete<Success>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(204);
+            expect(service['_imageGroups'].length).toEqual(IMAGE_GROUPS.length - 1);
           },
           (error) => {
             fail(error);

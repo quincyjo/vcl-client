@@ -62,7 +62,7 @@ export class FilterSelectorComponent implements OnInit, OnChanges {
     if (this.filterForm && changes.disabled) {
       for (let control of Object.keys(this.filterForm.controls)) {
         let target = this.filterForm.get(control);
-        if (changes.disabled.currentValue) {
+        if (target && changes.disabled.currentValue) {
           target.disable();
         } else {
           target.enable();

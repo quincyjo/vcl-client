@@ -1,0 +1,31 @@
+.header {
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .main {
+    @extend .section;
+    flex: 5 1 500px;
+    min-width: 400px;
+  }
+
+  .side {
+    @extend .section;
+    flex: 1 5 300px;
+    min-width: 200px;
+  }
+
+  .section {
+    &:not(:last-child) {
+      margin-right: 50px;
+    }
+  }
+}
+
+.full-width {
+  width: 100%;
+}

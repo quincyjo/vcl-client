@@ -1,0 +1,15 @@
+.title-section {
+  & > * {
+    display: inline-block;
+  }
+
+  .button{
+
+    &.back {
+
+    }
+  }
+
+  .title {
+  }
+}

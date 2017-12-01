@@ -4,6 +4,7 @@ import { MaterialModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { ImagesRouteComponent } from './images-route.component';
 import { ListComponent } from '../../components/list/list.component';
@@ -33,7 +34,8 @@ describe('ImagesRouteComponent', () => {
       ],
       providers: [
         ImageProviderService,
-        { provide: HttpClient, useValue: mockBackendService }
+        { provide: HttpClient, useValue: mockBackendService },
+        { provide: Router, useValue: {} },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })

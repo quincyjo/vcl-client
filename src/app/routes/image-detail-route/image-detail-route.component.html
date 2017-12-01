@@ -1,0 +1,124 @@
+<div class="header">
+  <vcl-form-status
+    class="flex-row"
+    [status]="status"
+    (save)="onFormSubmit()"
+    *ngIf="status.icon">
+  </vcl-form-status>
+  <h3 class="flex-row">{{ title }}</h3>
+  <div class="flex-row subtitle">
+    <span class="author">{{ image ? image.owner.email : '' }}</span>
+    <span class="spacer"></span>
+    <md-slide-toggle
+      class="right"
+      labelPosition="before"
+      [(ngModel)]="showAdvanced">
+      Show Advanced
+    </md-slide-toggle>
+  </div>
+</div>
+<div class="container padded"
+  *ngIf="image">
+  <div class="main">
+    <div>
+      <form [formGroup]="imageForm" (ngSubmit)="onFormSubmit()">
+        <md-form-field
+          class="full-width form-control">
+          <textarea mdInput
+            rows="7"
+            placeholder="Description"
+            formControlName="description">
+            {{ image.description }}
+          </textarea>
+        </md-form-field>
+        <div [hidden]="!showAdvanced">
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              type="number"
+              placeholder="Required RAM"
+              formControlName="minRam" />
+          </md-form-field>
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              type="number"
+              placeholder="Required Cores"
+              formControlName="minProcNumber" />
+          </md-form-field>
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              type="number"
+              placeholder="Processor Speed"
+              formControlName="minProcSpeed" />
+          </md-form-field>
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              type="number"
+              placeholder="Minimum Network Speed"
+              formControlName="minNetwork" />
+          </md-form-field>
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              type="number"
+              placeholder="Max Concurrent Usage"
+              formControlName="maxConcurrent" />
+          </md-form-field>
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              type="number"
+              placeholder="Estimated Reload Time"
+              formControlName="reloadTime" />
+          </md-form-field>
+          <div class="form-control">
+            <md-slide-toggle
+              FormControlName="forCheckout">
+              Available for checkout
+            </md-slide-toggle>
+          </div>
+          <div class="form-control">
+            <md-slide-toggle
+              FormControlName="checkUser">
+              Check User Activity
+            </md-slide-toggle>
+          </div>
+          <div class="form-control">
+            <md-slide-toggle
+              FormControlName="administrativeAccess">
+              Users have Administrative Access
+            </md-slide-toggle>
+          </div>
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              formControlName="hostname" />
+          </md-form-field>
+          <md-form-field
+            class="form-control">
+            <input mdInput
+              formControlName="connect" />
+          </md-form-field>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="side">
+    <vcl-list-editor
+      [title]="'Image Groups'"
+      [items]="image ? image.groups : []"
+      [items]="image ? image.groups : []"
+      [available]="imageGroups"
+      [placeholder]="'Add a group'"
+      [buttons]="buttons"
+      (addItem)="groupListAddItem($event)"
+      (removeItem)="groupListRemoveItem($event)"
+      (itemClicked)="groupListClickItem($event)"
+      (buttonClicked)="groupListClickButton($event)"
+      #groupList>
+    </vcl-list-editor>
+  </div>
+</div>

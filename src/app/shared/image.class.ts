@@ -3,11 +3,27 @@ import { User } from './user.class';
 import { ImageType } from './image-type.class';
 import { Platform } from './platform.class';
 import { OS } from './os.class';
+import { Group } from './group.class';
+import { ImageGroup } from './image-group.class';
 
 /**
  * Class which contains the information for an image.
  */
-export class Image implements Idable {
+export class Image extends Group<ImageGroup> implements Idable {
+  /**
+   * Rebuilds the image from a static JSON meta data as received from the API
+   * to a full local object.
+   * @param  {Image} image The image meta data to build from.
+   * @return {Image}       The fully rebuild Image object.
+   */
+  static rebuild(image: Image): Image {
+    let rebuilt = new Image(image.name);
+    for (let key of Object.keys(image)) {
+      rebuilt[key] = image[key];
+    }
+    return rebuilt;
+  }
+
   /** The ID of the image. **/
   public id: number;
   /** The type of the image. **/
@@ -16,6 +32,8 @@ export class Image implements Idable {
   public platform: Platform;
   /** The OS of the image. **/
   public os: OS;
+
+  get groups(): Array<ImageGroup> { return this.value; }
 
   constructor(
     /** The name of the image. **/
@@ -63,13 +81,24 @@ export class Image implements Idable {
     /** The architecture of the iamge. **/
     public architecture: Architecture = 'x86',
     /** A description of the iamge. **/
-    public description: string = '',
-    /** The use case for the image. **/
+    public description: string = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In neque sapien, malesuada a suscipit ut, mollis non dui. Vestibulum sollicitudin consequat rutrum. Vivamus ut odio a tellus interdum molestie. Proin et augue suscipit, consequat sapien at, rhoncus lectus. Aliquam vitae posuere erat, quis auctor felis. Nunc lacinia aliquet urna. Quisque consequat justo a euismod lacinia. Donec rutrum, lorem sed maximus tincidunt, nibh mauris hendrerit neque, a scelerisque nibh leo quis quam. Fusce vitae massa et lacus sollicitudin tempus eu nec magna.',
+    /** The use case for the imaga. **/
     public usage: string = '',
     /** The parent image revision number. **/
     public basedOffRevisionId: number = null,
-  ) { }
+    /** The image groups to which the image belongs. **/
+    groups: Array<ImageGroup> = []
+  ) {
+    super(groups);
+  }
 
+  public addGroup(group: ImageGroup): void {
+    super.add(group);
+  }
+
+  public removeGroup(group: ImageGroup): void {
+    super.remove(group);
+  }
 }
 
 /**

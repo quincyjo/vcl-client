@@ -52,7 +52,7 @@ export class ImageProviderService extends Provider<Image> {
       this._http.get<Image>(url)
         .subscribe(
           (result) => {
-            resolve(result);
+            resolve(Image.rebuild(result));
           },
           (error) => {
             reject(error);
@@ -123,7 +123,11 @@ export class ImageProviderService extends Provider<Image> {
       })
         .subscribe(
           (result) => {
-            resolve(result);
+            let results = [];
+            result.map((image) => {
+              results.push(Image.rebuild(image));
+            });
+            resolve(results);
           },
           (error) => {
             reject(error);

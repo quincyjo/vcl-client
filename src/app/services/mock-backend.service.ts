@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Idable } from '../shared/idable.interface';
 import { Reservation } from '../shared/reservation.class';
 import { Image } from '../shared/image.class';
-import { User } from '../shared/user.class';
+import { ImageGroup } from '../shared/image-group.class';
 import { ImageType } from '../shared/image-type.class';
+import { User } from '../shared/user.class';
 import { OS } from '../shared/os.class';
 import { UserGroup } from '../shared/user-group.class';
 import { Platform } from '../shared/platform.class';
@@ -22,6 +23,9 @@ export class MockBackendService {
 
   /** Internal ArrayModel for stored images. **/
   private _images: ArrayModel<Image>;
+
+  /** Internal ArrayModel for stored images. **/
+  private _imageGroups: ArrayModel<ImageGroup>;
 
   /** Internal ArrayModel for stored users. **/
   private _users: ArrayModel<User>;
@@ -44,6 +48,7 @@ export class MockBackendService {
   constructor() {
     this._reservations = new ArrayModel<Reservation>(RESERVATIONS);
     this._images = new ArrayModel<Image>(IMAGES);
+    this._imageGroups = new ArrayModel<ImageGroup>(IMAGE_GROUPS);
     this._users = new ArrayModel<User>(USERS);
     this._imagetypes = new ArrayModel<ImageType>(IMAGE_TYPES);
     this._platforms = new ArrayModel<Platform>(PLATFORMS);
@@ -146,6 +151,33 @@ export class MockBackendService {
         } else {
           return Observable.of(JSON.parse(JSON.stringify(this._images.data)));
         }
+      } else if (path[1] === 'imagegroups') {
+        if (path[2]) {
+            let id = parseInt(path[2]);
+            if (!isNaN(id) && this._imageGroups.get(id)) {
+              let image = this._imageGroups.get(id);
+              return Observable.of(JSON.parse(JSON.stringify(image)));
+            } else if (isNaN(id)){
+              return Observable.throw(new Error(CODE.BAD_REQUEST));
+            } else {
+              return Observable.throw(new Error(CODE.NOT_FOUND));
+            }
+        } else if(options && options.params) {
+          let params: HttpParams = options.params as HttpParams;
+          let processOptions: ProcessOptions = {
+            descriptor: JSON.parse(params.get('descriptor')),
+            start: parseInt(params.get('start')),
+            length: parseInt(params.get('length')),
+            orderBy: params.has('orderBy') && params.get('orderBy').charAt(0) === '[' ? JSON.parse(params.get('orderBy')) : params.get('orderBy')
+          };
+          let results: Array<ImageGroup> = this._processResults(this._imageGroups.data, processOptions);
+          results.map((image) => {
+            //TODO: Resolve sub data
+          });
+          return Observable.of(JSON.parse(JSON.stringify(results)));
+        } else {
+          return Observable.of(JSON.parse(JSON.stringify(this._imageGroups.data)));
+        }
       } else if (path[1] === 'usergroups') {
         if (path[2]) {
             let id = parseInt(path[2]);
@@ -180,6 +212,12 @@ export class MockBackendService {
     }
   }
 
+  /**
+   * Filters an array given the provess options.
+   * @param  {Array<T>} data The data to be processed.
+   * @param  {ProvessOptions} options The options for filtering `data`.
+   * @return {Array<T>}              The processed results from `data`.
+   */
   private _processResults<T>(data: Array<T>, options: ProcessOptions = {}): Array<T> {
     // Filter resullts basee on the descriptor.
     let results: Array<T>
@@ -231,7 +269,8 @@ export class MockBackendService {
     if (path[0] === 'api') {
       if (path[1] === 'reservations'
         ||path[1] === 'usergroups'
-        ||path[1] === 'images') {
+        ||path[1] === 'images'
+        ||path[1] === 'imagegroups') {
         if (!body) {
           // Data object was not provided, invalid method call.
           return Observable.throw(new Error(CODE.NOT_ALLOWED));
@@ -244,6 +283,10 @@ export class MockBackendService {
             let target: Image = body as Image;
             let model = this._images;
             return Observable.of(this._addToModel<Image>(model, target));
+          } else if (path[1] === 'imagegroups') {
+            let target: ImageGroup = body as ImageGroup;
+            let model = this._imageGroups;
+            return Observable.of(this._addToModel<ImageGroup>(model, target));
           } else if (path[1] === 'usergroups') {
             let target: UserGroup = body as UserGroup;
             let model = this._userGroups;
@@ -322,6 +365,20 @@ export class MockBackendService {
         } else {
           return Observable.throw(new Error(CODE.NOT_ALLOWED));
         }
+      } else if (path[1] === 'imagegroups') {
+        let imageGroup: ImageGroup = body as ImageGroup;
+        if (!isNaN(parseInt(path[2])) && imageGroup) {
+          imageGroup.id = parseInt(path[2]);
+          if (this._imageGroups.put(imageGroup)) {
+            // Target reservaiton was successfully updated.
+            return Observable.of(new Success(CODE.CREATED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
       } else if (path[1] === 'usergroups') {
         let group: UserGroup = body as UserGroup;
         if (!isNaN(parseInt(path[2])) && group) {
@@ -376,6 +433,19 @@ export class MockBackendService {
         if (path[2]) {
           let id: number = parseInt(path[2]);
           if (!isNaN(id) && this._images.delete(id)) {
+            // Target reservation successfully deleted.
+            return Observable.of(new Success(CODE.DELETED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
+      } else if (path[1] === 'imagegroups') {
+        if (path[2]) {
+          let id: number = parseInt(path[2]);
+          if (!isNaN(id) && this._imageGroups.delete(id)) {
             // Target reservation successfully deleted.
             return Observable.of(new Success(CODE.DELETED));
           } else {
@@ -644,6 +714,11 @@ export const IMAGES: Array<Image> = [
   new Image('An Image!'),
   new Image('An Image!'),
   new Image('An Image!'),
+];
+
+/** Constant users list for initially stored image groups. **/
+export const IMAGE_GROUPS: Array<ImageGroup> = [
+  new ImageGroup('Group')
 ];
 
 /** Constant users list for initially stored users. **/

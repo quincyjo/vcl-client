@@ -1,0 +1,22 @@
+.padded {
+  padding: 15px 10px;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-content: center;
+  margin: 0;
+
+  & > * {
+  }
+
+  .spacer {
+    flex: 1 1 100%;
+  }
+
+  .right {
+    align-self: flex-end;
+  }
+}

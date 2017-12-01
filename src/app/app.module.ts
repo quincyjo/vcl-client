@@ -13,6 +13,7 @@ import { AuthenticationService } from './services/authentication.service';
 import { ReservationProviderService } from './services/reservation-provider.service';
 import { ImageProviderService } from './services/image-provider.service';
 import { UserGroupProviderService } from './services/user-group-provider.service';
+import { ImageGroupProviderService } from './services/image-group-provider.service';
 import { MockBackendService } from './services/mock-backend.service';
 
 import { LoginRouteComponent } from './routes/login-route/login-route.component';
@@ -32,6 +33,11 @@ import { GroupsRouteComponent } from './routes/groups-route/groups-route.compone
 import { SchedulesRouteComponent } from './routes/schedules-route/schedules-route.component';
 import { ComputersRouteComponent } from './routes/computers-route/computers-route.component';
 import { FilterSelectorComponent } from './components/list/filter-selector/filter-selector.component';
+import { ReservationDetailComponent } from './components/reservation-detail/reservation-detail.component';
+import { ListEditorComponent } from './components/list-editor/list-editor.component';
+import { ImageDetailRouteComponent } from './routes/image-detail-route/image-detail-route.component';
+import { ImageGroupsRouteComponent } from './routes/image-groups-route/image-groups-route.component';
+import { FormStatusComponent } from './components/form-status/form-status.component';
 
 let http: any
   = environment.production
@@ -55,10 +61,26 @@ const routes: Routes = [
   {
     path: 'reservations',
     component: ReservationsRouteComponent,
-    canActivate: [AuthGuard] },
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'reservations/:id',
+    component: ReservationDetailComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: 'images',
     component: ImagesRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'images/:id',
+    component: ImageDetailRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'imagegroups',
+    component: ImageGroupsRouteComponent,
     canActivate: [AuthGuard]
   },
   {
@@ -99,7 +121,12 @@ const routes: Routes = [
     GroupsRouteComponent,
     SchedulesRouteComponent,
     ComputersRouteComponent,
-    FilterSelectorComponent
+    FilterSelectorComponent,
+    ReservationDetailComponent,
+    ListEditorComponent,
+    ImageDetailRouteComponent,
+    ImageGroupsRouteComponent,
+    FormStatusComponent
   ],
   entryComponents: [
     AddReservationDialogComponent,
@@ -120,6 +147,7 @@ const routes: Routes = [
     AuthenticationService,
     ReservationProviderService,
     ImageProviderService,
+    ImageGroupProviderService,
     UserGroupProviderService,
     AuthGuard,
     http

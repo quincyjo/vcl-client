@@ -22,7 +22,7 @@
       [mdTooltip]="(showFilter ? 'Hide' : 'Show') + ' filters'"
       (click)="toggleFilter()"
       *ngIf="generateFilterSelector">
-      <md-icon>search</md-icon>
+      <md-icon>{{showFilter ? 'close' : 'search' }}</md-icon>
     </button>
     <button md-button
       class="button"

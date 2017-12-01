@@ -1,0 +1,37 @@
+<div class="list-container">
+  <div class="list-header">
+    <h3 class="list-title">{{ title }}</h3>
+    <span class="buttons-container">
+      <button md-button
+        (click)="onButtonClicked(button)"
+        *ngFor="let button of buttons">
+        {{ button.label }}
+      </button>
+    </span>
+  </div>
+  <ul
+    class="list">
+    <li
+      class="item"
+      (click)="click(item)"
+      *ngFor="let item of items">
+      <button md-icon-button
+        (click)="remove(item)">
+        <md-icon md-list-icon>close</md-icon>
+      </button>
+      {{ item.name }}
+    </li>
+  </ul>
+
+  <form class="form" [formGroup]="addForm" (ngSubmit)="onSubmit()">
+    <md-form-field class="full-width">
+       <input type="text" [placeholder]="placeholder" mdInput [mdAutocomplete]="auto" formControlName="add">
+    </md-form-field>
+
+    <md-autocomplete #auto="mdAutocomplete">
+       <md-option *ngFor="let option of available" [value]="option">
+          {{ option.name }}
+       </md-option>
+    </md-autocomplete>
+  </form>
+</div>

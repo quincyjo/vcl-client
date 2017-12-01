@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ReservationProviderService } from '../../services/reservation-provider.service';
 import { Reservation } from '../../shared/reservation.class';
 import { MdDialog } from '@angular/material';
@@ -85,7 +85,6 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     buffer();
   }
 
-  /**
   /**
    * Event handler for the ReservationListComponent's requestNext event.
    * @param {any} e The event.

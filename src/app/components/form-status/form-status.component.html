@@ -1,0 +1,10 @@
+<div
+  [class]="'container' + ' ' + status.class">
+  <md-icon class="icon">{{ status.icon }}</md-icon>
+  <p class="message">
+    {{ status.message }}
+  </p>
+  <button md-button
+    (click)="onSaveClick($event)"
+    *ngIf="status.class === 'pending'">Save</button>
+</div>
