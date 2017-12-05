@@ -103,6 +103,12 @@
               formControlName="connect" />
           </md-form-field>
         </div>
+        <button md-button
+          color="primary"
+          [disabled]="!imageForm.dirty || !status.isPending()"
+          type="submit">
+          Save
+        </button>
       </form>
     </div>
   </div>

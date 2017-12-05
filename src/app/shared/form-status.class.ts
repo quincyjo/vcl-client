@@ -9,9 +9,13 @@ export class FormStatus {
   public message: string;
   /** The class apply to the status. **/
   public class: string;
+  /** Dirty flag. **/
+  public dirty: boolean;
+  /** Status code for the status. **/
+  public code: number;
 
   constructor() {
-
+    this.dirty = false;
   }
 
   /**
@@ -21,6 +25,7 @@ export class FormStatus {
    */
   public setIcon(icon: string): FormStatus {
     this.icon = icon;
+    this.dirty = true;
     return this;
   }
 
@@ -31,6 +36,7 @@ export class FormStatus {
    */
   public setClass(statusClass: string): FormStatus {
     this.class = statusClass;
+    this.dirty = true;
     return this;
   }
 
@@ -41,6 +47,7 @@ export class FormStatus {
    */
   public setMessage(statusClass: string): FormStatus {
     this.message = statusClass;
+    this.dirty = true;
     return this;
   }
 
@@ -53,7 +60,17 @@ export class FormStatus {
     this.message = message;
     this.icon = STATUS_ICON.SUCCESS;
     this.class = STATUS_CLASS.SUCCESS;
+    this.code = STATUS_CODE.SUCCESS;
+    this.dirty = true;
     return this;
+  }
+
+  /**
+   * Check if the status is success.
+   * @return {boolean} If the status is success.
+   */
+  public isSuccess(): boolean {
+    return (this.code === STATUS_CODE.SUCCESS);
   }
 
   /**
@@ -65,7 +82,17 @@ export class FormStatus {
     this.message = message;
     this.icon = STATUS_ICON.WARNING;
     this.class = STATUS_CLASS.WARNING;
+    this.code = STATUS_CODE.WARNING;
+    this.dirty = true;
     return this;
+  }
+
+  /**
+   * Check if the status is warning.
+   * @return {boolean} If the status is warning.
+   */
+  public isWarning(): boolean {
+    return (this.code === STATUS_CODE.WARNING);
   }
 
   /**
@@ -77,7 +104,17 @@ export class FormStatus {
     this.message = message;
     this.icon = STATUS_ICON.ERROR;
     this.class = STATUS_CLASS.ERROR;
+    this.code = STATUS_CODE.ERROR;
+    this.dirty = true;
     return this;
+  }
+
+  /**
+   * Check if the status is error.
+   * @return {boolean} If the status is error.
+   */
+  public isError(): boolean {
+    return (this.code === STATUS_CODE.ERROR);
   }
 
   /**
@@ -89,7 +126,17 @@ export class FormStatus {
     this.message = message;
     this.icon = STATUS_ICON.PENDING;
     this.class = STATUS_CLASS.PENDING;
+    this.code = STATUS_CODE.PENDING;
+    this.dirty = true;
     return this;
+  }
+
+  /**
+   * Check if the status is pending.
+   * @return {boolean} If the status is pending.
+   */
+  public isPending(): boolean {
+    return (this.code === STATUS_CODE.PENDING);
   }
 
   /**
@@ -101,7 +148,17 @@ export class FormStatus {
     this.message = message;
     this.icon = STATUS_ICON.INFO;
     this.class = STATUS_CLASS.INFO;
+    this.code = STATUS_CODE.INFO;
+    this.dirty = true;
     return this;
+  }
+
+  /**
+   * Check if the status is info.
+   * @return {boolean} If the status is info.
+   */
+  public isInfo(): boolean {
+    return (this.code === STATUS_CODE.INFO);
   }
 }
 
@@ -126,3 +183,26 @@ export const STATUS_CLASS = {
   PENDING: 'pending',
   INFO: 'info',
 }
+
+/**
+ * Enum for status codes.
+ * @type {Object}
+ */
+export const STATUS_CODE = {
+  SUCCESS: 0,
+  WARNING: 1,
+  ERROR: 2,
+  PENDING: 3,
+  INFO: 4,
+}
+
+/**
+ * Array indec for status codes.
+ */
+export const STATUS = [
+  'SUCCESS',
+  'WARNING',
+  'ERROR',
+  'PENDING',
+  'INFO'
+]

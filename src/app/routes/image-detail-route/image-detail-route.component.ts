@@ -97,6 +97,7 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
    * Event handler for the `imageForm`'s ngSubmit event.
    */
   public onFormSubmit(): void {
+    console.log('submitting form!');
     this._saveImage();
   }
 
