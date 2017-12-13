@@ -92,10 +92,18 @@ export class Image extends Group<ImageGroup> implements Idable {
     super(groups);
   }
 
+  /**
+   * Adds the image to `group`.
+   * @param {ImageGroup} group The ImageGroup to add the image to.
+   */
   public addGroup(group: ImageGroup): void {
     super.add(group);
   }
 
+  /**
+   * Removes the image from `group`.
+   * @param {ImageGroup} group The ImageGroup to remove the image from.
+   */
   public removeGroup(group: ImageGroup): void {
     super.remove(group);
   }

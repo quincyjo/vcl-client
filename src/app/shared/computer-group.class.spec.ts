@@ -1,6 +1,6 @@
 import { ComputerGroup } from './computer-group.class';
 
-describe('ComputerGroup', () => {
+describe('Reservation', () => {
   let group: ComputerGroup;
 
   beforeEach(() => {

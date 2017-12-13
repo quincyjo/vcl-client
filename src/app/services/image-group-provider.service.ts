@@ -5,10 +5,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { MockBackendService } from './mock-backend.service';
 import { Response } from '../shared/response.class';
 
+/**
+ * Concrete provider implementation of Provider for image groups.
+ */
 @Injectable()
 export class ImageGroupProviderService extends Provider<ImageGroup> {
   /** The URL to the API endpoint for image group operations. **/
-  private _endpoint: string = '/api/image groupgroups';
+  private _endpoint: string = '/api/imagegroups';
 
   constructor(private _http: HttpClient) {
     super();

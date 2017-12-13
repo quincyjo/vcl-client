@@ -1,3 +1,10 @@
-<p>
-  computers-route works!
-</p>
+<vcl-list
+  [title]="'Computers'"
+  [items]="computers"
+  [selectable]="true"
+  [columns]="columns"
+  [options]="options"
+  [filter]="false"
+  (buttonClicked)="onListButtonClicked($event)"
+  (scrolledToBottom)="onScrolledToBottom()">
+</vcl-list>

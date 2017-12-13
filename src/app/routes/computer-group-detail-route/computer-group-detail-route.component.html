@@ -1,0 +1,59 @@
+<div class="header">
+  <vcl-form-status
+    class="flex-row"
+    [status]="status"
+    (save)="onFormSubmit()"
+    *ngIf="status.icon">
+  </vcl-form-status>
+  <h3 class="flex-row">{{ title }}</h3>
+  <div class="flex-row subtitle">
+    <span class="author">{{ computerGroup && computerGroup.owner ? computerGroup.owner.email : '' }}</span>
+    <span class="spacer"></span>
+    <md-slide-toggle
+      class="right"
+      labelPosition="before"
+      [(ngModel)]="showAdvanced">
+      Show Advanced
+    </md-slide-toggle>
+  </div>
+</div>
+<div class="flex-container padded"
+  *ngIf="computerGroup">
+  <div class="main">
+    <div>
+      <form [formGroup]="computerGroupForm" (ngSubmit)="onFormSubmit()">
+        <md-form-field
+          class="full-width form-control">
+          <input mdInput
+            type="text"
+            placeholder="Hostname"
+            formControlName="name" />
+        </md-form-field>
+        <div [hidden]="!showAdvanced">
+          Advanced stuffs!!!
+        </div>
+        <button md-button
+          color="primary"
+          [disabled]="!computerGroupForm.dirty || !status.isPending()"
+          type="submit">
+          Save
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="side">
+    <vcl-list-editor
+      [title]="'ComputerGroup Groups'"
+      [items]="computerGroup ? computerGroup.groups : []"
+      [items]="computerGroup ? computerGroup.groups : []"
+      [available]="computerGroupGroups"
+      [placeholder]="'Add a group'"
+      [buttons]="buttons"
+      (addItem)="groupListAddItem($event)"
+      (removeItem)="groupListRemoveItem($event)"
+      (itemClicked)="groupListClickItem($event)"
+      (buttonClicked)="groupListClickButton($event)"
+      #computerList>
+    </vcl-list-editor>
+  </div>
+</div>

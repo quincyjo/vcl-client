@@ -1,10 +1,12 @@
 import { TestBed, inject, async } from '@angular/core/testing';
 
-import { ArrayModel, MockBackendService, RESERVATIONS, IMAGES, USER_GROUPS, IMAGE_GROUPS } from './mock-backend.service';
+import { ArrayModel, MockBackendService, RESERVATIONS, IMAGES, USER_GROUPS, IMAGE_GROUPS, COMPUTERS, COMPUTER_GROUPS } from './mock-backend.service';
 import { Error, Success } from '../shared/response.class';
 import { Reservation } from '../shared/reservation.class';
 import { Image } from '../shared/image.class';
 import { ImageGroup } from '../shared/image-group.class';
+import { Computer } from '../shared/computer.class';
+import { ComputerGroup } from '../shared/computer-group.class';
 import { UserGroup } from '../shared/user-group.class';
 import { HttpParams } from '@angular/common/http';
 
@@ -107,7 +109,7 @@ describe('MockBackendService', () => {
 
     it('it should get image groups', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/imagegroups';
-      service.get<Array<ImageGroup>>(url)
+      service.get<Array<ComputerGroup>>(url)
         .subscribe(
           (result) => {
             expect(result).toBeDefined();
@@ -121,7 +123,7 @@ describe('MockBackendService', () => {
 
     it('it should get an image group', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/imagegroups/0';
-      service.get<ImageGroup>(url)
+      service.get<ComputerGroup>(url)
         .subscribe(
           (result) => {
             expect(result).toBeDefined();
@@ -133,6 +135,61 @@ describe('MockBackendService', () => {
           });
     })));
 
+    it('it should get computers', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computers';
+      service.get<Array<Computer>>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(Array.isArray(result)).toBeTruthy();
+            expect(result.length).toEqual(COMPUTERS.length);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should get an computer group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computers/0';
+      service.get<Computer>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.id).toEqual(0);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should get computer groups', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computergroups';
+      service.get<Array<ImageGroup>>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(Array.isArray(result)).toBeTruthy();
+            expect(result.length).toEqual(COMPUTER_GROUPS.length);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should get an computer group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computergroups/0';
+      service.get<ImageGroup>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.id).toEqual(0);
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
 
     it('should accept a descriptor', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/reservations';
@@ -376,6 +433,39 @@ describe('MockBackendService', () => {
           });
     })));
 
+    it('it should add a computer', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computers';
+      let newComputer: Computer = new Computer();
+      service.post<Success>(url, newComputer)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(201);
+            expect(service['_computers'].length).toEqual(COMPUTERS.length + 1);
+            expect(typeof result['id']).not.toBeNaN();
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
+
+    it('it should add a computer group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computergroups';
+      let newComputerGroup: ComputerGroup = new ComputerGroup('A new image group');
+      service.post<Success>(url, newComputerGroup)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(201);
+            expect(service['_computerGroups'].length).toEqual(COMPUTER_GROUPS.length + 1);
+            expect(typeof result['id']).not.toBeNaN();
+          },
+          (error) => {
+            fail(error);
+          });
+    })));
 
     it('it should throw a 405 if not reservation is given', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/reservations';
@@ -498,6 +588,56 @@ describe('MockBackendService', () => {
         )
     })));
 
+    it('it should update a computer', async(inject([MockBackendService], (service: MockBackendService) => {
+      let id: number = 0;
+      let url: string = '/api/computers/' + id;
+      let newComputer: Computer = new Computer();
+      service.put<Success>(url, newComputer)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(201);
+            service.get<Computer>(url)
+              .subscribe(
+                (result) => {
+                  expect(result).toBeDefined();
+                },
+                (error) => {
+                  fail(error);
+                });
+          },
+          (error) => {
+            fail(error);
+          }
+        )
+    })));
+
+    it('it should update a computer group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let id: number = 0;
+      let url: string = '/api/computergroups/' + id;
+      let newComputerGroup: ComputerGroup = new ComputerGroup('An edited computer group');
+      service.put<Success>(url, newComputerGroup)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(201);
+            service.get<ComputerGroup>(url)
+              .subscribe(
+                (result) => {
+                  expect(result).toBeDefined();
+                  expect(result.name).toEqual(newComputerGroup.name);
+                },
+                (error) => {
+                  fail(error);
+                });
+          },
+          (error) => {
+            fail(error);
+          }
+        )
+    })));
 
     it('it should throw a 404 no reservation was found', async(inject([MockBackendService], (service: MockBackendService) => {
       let url: string = '/api/reservations/4200';
@@ -622,6 +762,38 @@ describe('MockBackendService', () => {
             expect(typeof result).toEqual('object');
             expect(result.code).toEqual(204);
             expect(service['_imageGroups'].length).toEqual(IMAGE_GROUPS.length - 1);
+          },
+          (error) => {
+            fail(error);
+          }
+        )
+    })));
+
+    it('it should delete a computer', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computers/0';
+      service.delete<Success>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(204);
+            expect(service['_computers'].length).toEqual(COMPUTERS.length - 1);
+          },
+          (error) => {
+            fail(error);
+          }
+        )
+    })));
+
+    it('it should delete a computer group', async(inject([MockBackendService], (service: MockBackendService) => {
+      let url: string = '/api/computergroups/0';
+      service.delete<Success>(url)
+        .subscribe(
+          (result) => {
+            expect(result).toBeDefined();
+            expect(typeof result).toEqual('object');
+            expect(result.code).toEqual(204);
+            expect(service['_computerGroups'].length).toEqual(COMPUTER_GROUPS.length - 1);
           },
           (error) => {
             fail(error);

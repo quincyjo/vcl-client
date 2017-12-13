@@ -3,6 +3,7 @@ import { ImageProviderService } from '../../services/image-provider.service';
 import { Image } from '../../shared/image.class';
 import { ListComponent, ListColumn, ListColumnType, ListOption } from '../../components/list/list.component';
 import { Router } from '@angular/router';
+
 /**
  * Route that displays images and their information and actions.
  */
@@ -12,25 +13,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./images-route.component.scss']
 })
 export class ImagesRouteComponent implements OnInit {
-  /** Columns to be rendered by ListComponent. **/
-  public columns2 = [
-    {
-      header: 'Name',
-      value: 'name'
-    }, {
-      header: 'Owner',
-      value: 'owner.email'
-    }, {
-      header: 'Image Type',
-      value: 'type.name'
-    }, {
-      header: 'Platform',
-      value: 'platform.name'
-    }, {
-      header: 'OS',
-      value: 'os.prettyName'
-    }
-  ];
 
   /** Columns to be displayed by ListComponent for the list of reservations. **/
   public columns: Array<ListColumn> = [
@@ -83,6 +65,10 @@ export class ImagesRouteComponent implements OnInit {
     //TODO: Request next on ImageProviderService.
   }
 
+  /**
+   * Event handler for the ListComponent's buttonClicked event, which will
+   * handle the event based on the button event.
+   */
   public onListButtonClicked(event: any): void {
     console.log(event);
     if (event.event === 'view') {

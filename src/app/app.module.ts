@@ -14,6 +14,9 @@ import { ReservationProviderService } from './services/reservation-provider.serv
 import { ImageProviderService } from './services/image-provider.service';
 import { UserGroupProviderService } from './services/user-group-provider.service';
 import { ImageGroupProviderService } from './services/image-group-provider.service';
+import { ComputerProviderService } from './services/computer-provider.service';
+import { ComputerGroupProviderService } from './services/computer-group-provider.service';
+import { ManagementNodeProviderService } from './services/management-node-provider.service';
 import { MockBackendService } from './services/mock-backend.service';
 
 import { LoginRouteComponent } from './routes/login-route/login-route.component';
@@ -28,7 +31,6 @@ import { NavItemComponent } from './components/navigation/nav-item/nav-item.comp
 import { ImagesRouteComponent } from './routes/images-route/images-route.component';
 import { ListComponent } from './components/list/list.component';
 
-import 'hammerjs';
 import { GroupsRouteComponent } from './routes/groups-route/groups-route.component';
 import { SchedulesRouteComponent } from './routes/schedules-route/schedules-route.component';
 import { ComputersRouteComponent } from './routes/computers-route/computers-route.component';
@@ -38,6 +40,14 @@ import { ListEditorComponent } from './components/list-editor/list-editor.compon
 import { ImageDetailRouteComponent } from './routes/image-detail-route/image-detail-route.component';
 import { ImageGroupsRouteComponent } from './routes/image-groups-route/image-groups-route.component';
 import { FormStatusComponent } from './components/form-status/form-status.component';
+import { ImageGroupDetailRouteComponent } from './routes/image-group-detail-route/image-group-detail-route.component';
+import { ComputerGroupsRouteComponent } from './routes/computer-groups-route/computer-groups-route.component';
+import { ComputerGroupDetailRouteComponent } from './routes/computer-group-detail-route/computer-group-detail-route.component';
+import { ComputerDetailRouteComponent } from './routes/computer-detail-route/computer-detail-route.component';
+
+import 'hammerjs';
+import { ManagementNodesRouteComponent } from './routes/management-nodes-route/management-nodes-route.component';
+import { ManagementNodeDetailRouteComponent } from './routes/management-node-detail-route/management-node-detail-route.component';
 
 let http: any
   = environment.production
@@ -84,6 +94,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'imagegroups/:id',
+    component: ImageGroupDetailRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'groups',
     component: GroupsRouteComponent,
     canActivate: [AuthGuard]
@@ -99,9 +114,28 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'computers/:id',
+    component: ComputerDetailRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'computergroups',
+    component: ComputerGroupsRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'computergroups/:id',
+    component: ComputerGroupDetailRouteComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'home',
     component: HomeRouteComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: '**',
+    redirectTo: '/home'
   }
 ]
 
@@ -126,7 +160,13 @@ const routes: Routes = [
     ListEditorComponent,
     ImageDetailRouteComponent,
     ImageGroupsRouteComponent,
-    FormStatusComponent
+    FormStatusComponent,
+    ImageGroupDetailRouteComponent,
+    ComputerGroupsRouteComponent,
+    ComputerGroupDetailRouteComponent,
+    ComputerDetailRouteComponent,
+    ManagementNodesRouteComponent,
+    ManagementNodeDetailRouteComponent
   ],
   entryComponents: [
     AddReservationDialogComponent,
@@ -149,6 +189,9 @@ const routes: Routes = [
     ImageProviderService,
     ImageGroupProviderService,
     UserGroupProviderService,
+    ComputerGroupProviderService,
+    ComputerProviderService,
+    ManagementNodeProviderService,
     AuthGuard,
     http
   ],

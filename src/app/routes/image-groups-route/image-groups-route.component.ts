@@ -57,6 +57,9 @@ export class ImageGroupsRouteComponent implements OnInit {
 
   public onListButtonClicked(event: any): void {
     console.log(event);
+    if (event.event === 'view') {
+      this._router.navigate(['imagegroups', event.target.id]);
+    }
   }
 
 }

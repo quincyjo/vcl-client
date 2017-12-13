@@ -7,6 +7,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ReservationDetailComponent } from './reservation-detail.component';
 import { ReservationProviderService } from '../../services/reservation-provider.service';
+import { FormStatusComponent } from '../../components/form-status/form-status.component';
 
 import { Observable } from 'rxjs';
 
@@ -16,26 +17,26 @@ describe('ReservationDetailComponent', () => {
   let mockBackendService: MockBackendService;
 
   beforeEach(async(() => {
-    // mockBackendService = new MockBackendService();
-    // TestBed.configureTestingModule({
-    //   declarations: [
-    //     ReservationDetailComponent
-    //   ],
-    //   providers: [
-    //     ReservationProviderService,
-    //     { provide: HttpClient, useValue: mockBackendService },
-    //     { provide: Router, useValue: {} },
-    //     { provide: ActivatedRoute, useValue: {
-    //       params: Observable.of({id: 0})
-    //     }}
-    //   ],
-    //   imports: [
-    //     RouterModule,
-    //     MaterialModule,
-    //   NoopAnimationsModule
-    //   ]
-    // })
-    // .compileComponents();
+    mockBackendService = new MockBackendService();
+    TestBed.configureTestingModule({
+      declarations: [
+        ReservationDetailComponent,
+      ],
+      providers: [
+        ReservationProviderService,
+        { provide: HttpClient, useValue: mockBackendService },
+        { provide: Router, useValue: {} },
+        { provide: ActivatedRoute, useValue: {
+          params: Observable.of({id: 0})
+        }}
+      ],
+      imports: [
+        RouterModule,
+        MaterialModule,
+      NoopAnimationsModule
+      ]
+    })
+    .compileComponents();
   }));
 
   beforeEach(() => {

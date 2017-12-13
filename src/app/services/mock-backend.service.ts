@@ -7,6 +7,9 @@ import { ImageType } from '../shared/image-type.class';
 import { User } from '../shared/user.class';
 import { OS } from '../shared/os.class';
 import { UserGroup } from '../shared/user-group.class';
+import { ComputerGroup } from '../shared/computer-group.class';
+import { Computer } from '../shared/computer.class';
+import { ManagementNode } from '../shared/management-node.class';
 import { Platform } from '../shared/platform.class';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
@@ -42,6 +45,15 @@ export class MockBackendService {
   /** Internal ArrayModel for user groups. **/
   private _userGroups: ArrayModel<UserGroup>;
 
+  /** Internal ArrayModel for computers. **/
+  private _computers: ArrayModel<Computer>;
+
+  /** Internal ArrayModel for computer groups. **/
+  private _computerGroups: ArrayModel<ComputerGroup>;
+
+  /** Internal ArrayModel for management nodes. **/
+  private _managementNodes: ArrayModel<ManagementNode>;
+
   /** Maps an url to available endpoints. **/
   private urlMap: any;
 
@@ -54,28 +66,9 @@ export class MockBackendService {
     this._platforms = new ArrayModel<Platform>(PLATFORMS);
     this._oses = new ArrayModel<OS>(OSES);
     this._userGroups = new ArrayModel<UserGroup>(USER_GROUPS);
-    this.urlMap = {
-      'api': {
-        'images': {
-          GET: () => { },
-          POST: () => { },
-          ':id:number': {
-            GET: () => { },
-            PUT: () => { },
-            DELETE: () => { }
-          }
-        },
-        'reservations': {
-          GET: () => { },
-          POST: () => { },
-          ':id:number': {
-            GET: () => { },
-            PUT: () => { },
-            DELETE: () => { }
-          }
-        }
-      }
-    };
+    this._computers = new ArrayModel<Computer>(COMPUTERS);
+    this._computerGroups = new ArrayModel<ComputerGroup>(COMPUTER_GROUPS);
+    this._managementNodes = new ArrayModel<ManagementNode>(MANAGEMENT_NODES);
   }
 
   /**
@@ -87,6 +80,7 @@ export class MockBackendService {
   public get<T>(url: string, options?: RequestOptions): Observable<T> {
     // TODO: Parse url and do work
     let path: Array<string> = url.split('/');
+    let data;
     if (!path[0]) {
       path = path.slice(1);
     }
@@ -102,20 +96,9 @@ export class MockBackendService {
             // Target reservation did not exist.
             return Observable.throw(new Error(CODE.NOT_FOUND));
           }
-        }
         // Get all reservations.
-        else if(options && options.params) {
-          let params: HttpParams = options.params as HttpParams;
-          let processOptions: ProcessOptions = {
-            descriptor: JSON.parse(params.get('descriptor')),
-            start: parseInt(params.get('start')),
-            length: parseInt(params.get('length')),
-            orderBy: params.has('orderBy') && params.get('orderBy').charAt(0) === '[' ? JSON.parse(params.get('orderBy')) : params.get('orderBy')
-          };
-          let results: Array<Reservation> = this._processResults(this._reservations.data, processOptions);
-          return Observable.of(JSON.parse(JSON.stringify(results)));
         } else {
-          return Observable.of(JSON.parse(JSON.stringify(this._reservations.data)));
+          data = (JSON.parse(JSON.stringify(this._reservations.data)));
         }
       } else if (path[1] === 'images') {
         if (path[2]) {
@@ -132,24 +115,14 @@ export class MockBackendService {
             } else {
               return Observable.throw(new Error(CODE.NOT_FOUND));
             }
-        } else if(options && options.params) {
-          let params: HttpParams = options.params as HttpParams;
-          let processOptions: ProcessOptions = {
-            descriptor: JSON.parse(params.get('descriptor')),
-            start: parseInt(params.get('start')),
-            length: parseInt(params.get('length')),
-            orderBy: params.has('orderBy') && params.get('orderBy').charAt(0) === '[' ? JSON.parse(params.get('orderBy')) : params.get('orderBy')
-          };
-          let results: Array<Image> = this._processResults(this._images.data, processOptions);
-          results.map((image) => {
+        } else {
+          data = JSON.parse(JSON.stringify(this._images.data));
+          data.map((image) => {
             image.owner = this._users.get(image.ownerId);
             image.type = this._imagetypes.get(image.typeId);
             image.platform = this._platforms.get(image.platformId);
             image.os = this._oses.get(image.OSId);
           });
-          return Observable.of(JSON.parse(JSON.stringify(results)));
-        } else {
-          return Observable.of(JSON.parse(JSON.stringify(this._images.data)));
         }
       } else if (path[1] === 'imagegroups') {
         if (path[2]) {
@@ -162,21 +135,11 @@ export class MockBackendService {
             } else {
               return Observable.throw(new Error(CODE.NOT_FOUND));
             }
-        } else if(options && options.params) {
-          let params: HttpParams = options.params as HttpParams;
-          let processOptions: ProcessOptions = {
-            descriptor: JSON.parse(params.get('descriptor')),
-            start: parseInt(params.get('start')),
-            length: parseInt(params.get('length')),
-            orderBy: params.has('orderBy') && params.get('orderBy').charAt(0) === '[' ? JSON.parse(params.get('orderBy')) : params.get('orderBy')
-          };
-          let results: Array<ImageGroup> = this._processResults(this._imageGroups.data, processOptions);
-          results.map((image) => {
+        } else {
+          data = JSON.parse(JSON.stringify(this._imageGroups.data));
+          data.map((image) => {
             //TODO: Resolve sub data
           });
-          return Observable.of(JSON.parse(JSON.stringify(results)));
-        } else {
-          return Observable.of(JSON.parse(JSON.stringify(this._imageGroups.data)));
         }
       } else if (path[1] === 'usergroups') {
         if (path[2]) {
@@ -189,7 +152,54 @@ export class MockBackendService {
             } else {
               return Observable.throw(new Error(CODE.NOT_FOUND));
             }
-        } else if(options && options.params) {
+        } else {
+          data = JSON.parse(JSON.stringify(this._userGroups.data));
+        }
+      } else if (path[1] === 'computergroups') {
+        if (path[2]) {
+            let id = parseInt(path[2]);
+            if (!isNaN(id) && this._computerGroups.get(id)) {
+              let group = this._computerGroups.get(id);
+              return Observable.of(JSON.parse(JSON.stringify(group)));
+            } else if (isNaN(id)){
+              return Observable.throw(new Error(CODE.BAD_REQUEST));
+            } else {
+              return Observable.throw(new Error(CODE.NOT_FOUND));
+            }
+        } else {
+          data = JSON.parse(JSON.stringify(this._computerGroups.data));
+        }
+      } else if (path[1] === 'computers') {
+        if (path[2]) {
+            let id = parseInt(path[2]);
+            if (!isNaN(id) && this._computers.get(id)) {
+              let group = this._computers.get(id);
+              return Observable.of(JSON.parse(JSON.stringify(group)));
+            } else if (isNaN(id)){
+              return Observable.throw(new Error(CODE.BAD_REQUEST));
+            } else {
+              return Observable.throw(new Error(CODE.NOT_FOUND));
+            }
+        } else {
+          data = JSON.parse(JSON.stringify(this._computers.data));
+        }
+      } else if (path[1] === 'managementnodes') {
+        if (path[2]) {
+            let id = parseInt(path[2]);
+            if (!isNaN(id) && this._managementNodes.get(id)) {
+              let group = this._managementNodes.get(id);
+              return Observable.of(JSON.parse(JSON.stringify(group)));
+            } else if (isNaN(id)){
+              return Observable.throw(new Error(CODE.BAD_REQUEST));
+            } else {
+              return Observable.throw(new Error(CODE.NOT_FOUND));
+            }
+        } else {
+          data = JSON.parse(JSON.stringify(this._managementNodes.data));
+        }
+      }
+      if (data) {
+        if(options && options.params) {
           let params: HttpParams = options.params as HttpParams;
           let processOptions: ProcessOptions = {
             descriptor: JSON.parse(params.get('descriptor')),
@@ -197,13 +207,13 @@ export class MockBackendService {
             length: parseInt(params.get('length')),
             orderBy: params.has('orderBy') && params.get('orderBy').charAt(0) === '[' ? JSON.parse(params.get('orderBy')) : params.get('orderBy')
           };
-          let results: Array<UserGroup> = this._processResults(this._userGroups.data, processOptions);
+          let results = this._processResults(data, processOptions);
           return Observable.of(JSON.parse(JSON.stringify(results)));
         } else {
-          return Observable.of(JSON.parse(JSON.stringify(this._userGroups.data)));
+          return Observable.of(JSON.parse(JSON.stringify(data)));
         }
       } else {
-        // Not a vliad API endpoint.
+        // Not a valid API endpoint.
         return Observable.throw(new Error(CODE.BAD_REQUEST));
       }
     } else {
@@ -270,7 +280,11 @@ export class MockBackendService {
       if (path[1] === 'reservations'
         ||path[1] === 'usergroups'
         ||path[1] === 'images'
-        ||path[1] === 'imagegroups') {
+        ||path[1] === 'imagegroups'
+        ||path[1] === 'computers'
+        ||path[1] === 'computergroups'
+        ||path[1] === 'managementnodes'
+      ) {
         if (!body) {
           // Data object was not provided, invalid method call.
           return Observable.throw(new Error(CODE.NOT_ALLOWED));
@@ -291,6 +305,18 @@ export class MockBackendService {
             let target: UserGroup = body as UserGroup;
             let model = this._userGroups;
             return Observable.of(this._addToModel<UserGroup>(model, target));
+          } else if (path[1] === 'computergroups') {
+            let target: ComputerGroup = body as ComputerGroup;
+            let model = this._computerGroups;
+            return Observable.of(this._addToModel<ComputerGroup>(model, target));
+          } else if (path[1] === 'computers') {
+            let target: Computer = body as Computer;
+            let model = this._computers;
+            return Observable.of(this._addToModel<Computer>(model, target));
+          } else if (path[1] === 'managementnodes') {
+            let target: ManagementNode = body as ManagementNode;
+            let model = this._managementNodes;
+            return Observable.of(this._addToModel<ManagementNode>(model, target));
           }
         }
       } else {
@@ -393,6 +419,48 @@ export class MockBackendService {
         } else {
           return Observable.throw(new Error(CODE.NOT_ALLOWED));
         }
+      } else if (path[1] === 'computergroups') {
+        let group: ComputerGroup = body as ComputerGroup;
+        if (!isNaN(parseInt(path[2])) && group) {
+          group.id = parseInt(path[2]);
+          if (this._computerGroups.put(group)) {
+            // Target reservaiton was successfully updated.
+            return Observable.of(new Success(CODE.CREATED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
+      } else if (path[1] === 'computers') {
+        let computer: Computer = body as Computer;
+        if (!isNaN(parseInt(path[2])) && computer) {
+          computer.id = parseInt(path[2]);
+          if (this._computers.put(computer)) {
+            // Target reservaiton was successfully updated.
+            return Observable.of(new Success(CODE.CREATED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
+      } else if (path[1] === 'managementnodes') {
+        let node: ManagementNode = body as ManagementNode;
+        if (!isNaN(parseInt(path[2])) && node) {
+          node.id = parseInt(path[2]);
+          if (this._managementNodes.put(node)) {
+            // Target reservaiton was successfully updated.
+            return Observable.of(new Success(CODE.CREATED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
       } else {
         // Not a vliad API endpoint.
         return Observable.throw(new Error(CODE.BAD_REQUEST));
@@ -459,6 +527,45 @@ export class MockBackendService {
         if (path[2]) {
           let id: number = parseInt(path[2]);
           if (!isNaN(id) && this._userGroups.delete(id)) {
+            // Target reservation successfully deleted.
+            return Observable.of(new Success(CODE.DELETED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
+      } else if (path[1] === 'computergroups') {
+        if (path[2]) {
+          let id: number = parseInt(path[2]);
+          if (!isNaN(id) && this._computerGroups.delete(id)) {
+            // Target reservation successfully deleted.
+            return Observable.of(new Success(CODE.DELETED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
+      } else if (path[1] === 'computers') {
+        if (path[2]) {
+          let id: number = parseInt(path[2]);
+          if (!isNaN(id) && this._computers.delete(id)) {
+            // Target reservation successfully deleted.
+            return Observable.of(new Success(CODE.DELETED));
+          } else {
+            // Target reservation was not found.
+            return Observable.throw(new Error(CODE.NOT_FOUND));
+          }
+        } else {
+          return Observable.throw(new Error(CODE.NOT_ALLOWED));
+        }
+      } else if (path[1] === 'managementnodes') {
+        if (path[2]) {
+          let id: number = parseInt(path[2]);
+          if (!isNaN(id) && this._managementNodes.delete(id)) {
             // Target reservation successfully deleted.
             return Observable.of(new Success(CODE.DELETED));
           } else {
@@ -744,6 +851,21 @@ export const OSES: Array<OS> = [
 /** Constant UserGroups list for initially stored user groups. **/
 export const USER_GROUPS: Array<UserGroup> = [
   new UserGroup('Admins')
+];
+
+/** Constant Computers list for initially stored computer computers. **/
+export const COMPUTERS: Array<Computer> = [
+  new Computer()
+];
+
+/** Constant ComputerGroups list for initially stored computer groups. **/
+export const COMPUTER_GROUPS: Array<ComputerGroup> = [
+  new ComputerGroup('Computer Grouop')
+];
+
+/** Constant ComputerGroups list for initially stored computer groups. **/
+export const MANAGEMENT_NODES: Array<ManagementNode> = [
+  new ManagementNode('Management Node')
 ];
 
 /** Constant for supported reservation types. **/

@@ -17,7 +17,7 @@
       "test": "test.ts",
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
-      "prefix": "app",
+      "prefix": "vcl",
       "styles": [
         "styles.scss",
         "../node_modules/roboto-fontface/css/roboto/sass/roboto-fontface.scss"

@@ -4,35 +4,39 @@ import { ImageProviderService } from '../../services/image-provider.service';
 import { ImageGroupProviderService } from '../../services/image-group-provider.service';
 import { Image } from '../../shared/image.class';
 import { ImageGroup } from '../../shared/image-group.class';
+import { ComputerGroup } from '../../shared/computer-group.class';
 import { ListEditorButton, ListEditorItem } from '../../components/list-editor/list-editor.component';
 import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormStatus } from '../../shared/form-status.class';
 
 /**
- * Renders the details of a specific image by id encoded in the route parameter
- * with key 'id'.
+ * Renders the details of a specific image group by id encoded in the route
+ * parameter with key 'id'.
  */
 @Component({
-  selector: 'vcl-image-detail-route',
-  templateUrl: './image-detail-route.component.html',
-  styleUrls: ['./image-detail-route.component.scss']
+  selector: 'vcl-image-group-detail-route',
+  templateUrl: './image-group-detail-route.component.html',
+  styleUrls: ['./image-group-detail-route.component.scss']
 })
-export class ImageDetailRouteComponent implements OnInit, OnDestroy {
+export class ImageGroupDetailRouteComponent implements OnInit, OnDestroy {
   /** View child for the ListEditorComponent for the image's image groups. **/
-  @ViewChild('groupList') groupList;
+  @ViewChild('imageList') imageList;
 
-  /** The image to show the details off. **/
-  private image: Image;
+  /** The ImageGroup to show the details of. **/
+  public imageGroup: ImageGroup;
 
-  /** The image groups. **/
-  private imageGroups: Array<ImageGroup>;
+  /** The images in `imageGroup`. **/
+  public images: Array<Image>;
+
+  /** The ComputerGroups linked to `imageGroup`. **/
+  public computerGroups: Array<ComputerGroup>;
 
   /** Subscription to the route parameters. **/
   private paramsSub: any;
 
   /** The form for editing the `image`. **/
-  public imageForm: FormGroup;
+  public imageGroupForm: FormGroup;
 
   /** Whether of not to show advanced options. **/
   public showAdvanced: boolean = true;
@@ -46,23 +50,24 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
   /** The form status for the image form. **/
   public status: FormStatus;
 
-  /** Getter for the title of the page. **/
-  get title(): string { return this.image ? this.image.name : 'loading...'; }
-
   /** The buttons to display on the list of image groups. **/
   public buttons: Array<ListEditorButton> = [
     new ListEditorButton('Manage')
   ];
 
+
+  /** Getter for the title of the page. **/
+  get title(): string { return this.imageGroup ? this.imageGroup.name : 'loading...'; }
+
   constructor(
     private _imageProvider: ImageProviderService,
-    private _groupProvider: ImageGroupProviderService,
+    private _imageGroupProvider: ImageGroupProviderService,
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
     private _router: Router
   ) {
-    this.imageGroups = [];
     this.status = new FormStatus();
+    this.images = [];
   }
 
   /**
@@ -71,11 +76,11 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
    */
   ngOnInit(): void {
     this.paramsSub = this._route.params.subscribe((params) => {
-      if (!this.image) {
+      if (!this.imageGroup) {
         let id = +params['id'];
-        this._imageProvider.get(id)
-          .then((image) => {
-            this.image = image;
+        this._imageGroupProvider.get(id)
+          .then((imageGroup) => {
+            this.imageGroup = imageGroup;
             this._buildForm();
           })
           .catch((error) => {
@@ -83,12 +88,14 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
           });
       }
     });
-    let iterator: AsyncIterator<ImageGroup> = this._groupProvider.asyncIterator();
+    let iterator: AsyncIterator<Image> = this._imageProvider.asyncIterator();
     let step = () => {
       iterator.next()
         .then((result) => {
-          this.imageGroups.push(result.value);
-          // console.log(result.value);
+          if(result.value) {
+            this.images.push(result.value);
+            console.log(result.value);
+          }
           if (!result.done) {
             step();
           }
@@ -107,59 +114,47 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
     this.paramsSub.unsubscribe();
   }
 
-
-  /**
-   * Builds `imageForm` using FormBuilder.
-   */
-  private _buildForm(): void {
-    this.imageForm = this._formBuilder.group({
-      description: this.image.description,
-      minRam: this.image.minRam,
-      minProcNumber: this.image.minProcSpeed,
-      minProcSpeed: this.image.minProcNumber,
-      minNetwork: this.image.minNetwork,
-      maxConcurrent: this.image.maxConcurrent,
-      reloadTime: this.image.reloadTime,
-      forCheckout: this.image.forCheckout,
-      checkUser: false,
-      administrativeAccess: false,
-      hostname: 'host',
-      connect: 'SSH'
-    });
-    this.imageForm.valueChanges.subscribe((value) => {
-      this.status.pending('Unsaved changes...')
-      if(this.saveTimeout) {
-        clearTimeout(this.saveTimeout)
-      }
-      this.saveTimeout = setTimeout(() => {
-        this._saveImage();
-      }, 3000);
-    });
-  }
-
   /**
    * Event handler for the `imageForm`'s ngSubmit event.
    */
   public onFormSubmit(): void {
     console.log('submitting form!');
-    this._saveImage();
+    this._saveImageGroup();
   }
 
   /**
-   * Updates `image` with the updated values from `imageForm` and attempts to
-   * put the update to the backend. The promises resolves uppon the successful
-   * update or rejects if an error occurs. Also manages `status` across the
-   * save progress.
-   * @param  {value}       value=this.imageForm.value The updated values.
+   * Builds `imageGroupForm` using FormBuilder.
+   */
+  private _buildForm(): void {
+    this.imageGroupForm = this._formBuilder.group({
+      name: this.imageGroup.name,
+    });
+    this.imageGroupForm.valueChanges.subscribe((value) => {
+      this.status.pending('Unsaved changes...')
+      if(this.saveTimeout) {
+        clearTimeout(this.saveTimeout)
+      }
+      this.saveTimeout = setTimeout(() => {
+        this._saveImageGroup();
+      }, 3000);
+    });
+  }
+
+  /**
+   * Updates `imageGroup` with the updated values from `imageGroupForm` and
+   * attempts to put the update to the backend. The promises resolves uppon
+   * the successful update or rejects if an error occurs. Also manages `status`
+   * across the save progress.
+   * @param  {value}       value=this.imageGroupForm.value The updated values.
    * @return {Promise<any>}                           The promise of the update.
    */
-  private _saveImage(value = this.imageForm.value): Promise<any> {
+  private _saveImageGroup(value = this.imageGroupForm.value): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       this.status.pending('Unsaved changes...')
       for (let key of Object.keys(value)) {
-        this.image[key] = value[key];
+        this.imageGroup[key] = value[key];
       }
-      this._imageProvider.put(this.image)
+      this._imageGroupProvider.put(this.imageGroup)
         .then((image) => {
           this.status.success('Changes have been saved.');
         })
@@ -175,11 +170,11 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
    * Event handler for the addItem event from `groupList`.
    * @param {ImageGroup} group The group to add.
    */
-  public groupListAddItem(group: ImageGroup): void {
-    this.image.addGroup(group);
-    this._imageProvider.put(this.image)
+  public imageListAddItem(image: Image): void {
+    this.imageGroup.addToGroup(image);
+    this._imageGroupProvider.put(this.imageGroup)
       .then((result) => {
-        this.groupList.reset();
+        this.imageList.reset();
       })
       .catch((error) =>  {
         console.log(error);
@@ -190,9 +185,9 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
    * Event handler for the removeItem event from `groupList`.
    * @param {ImageGroup} group The image group to remove.
    */
-  public groupListRemoveItem(group: ImageGroup): void {
-    this.image.removeGroup(group);
-    this._imageProvider.put(this.image)
+  public imageListRemoveItem(image: Image): void {
+    this.imageGroup.removeFromGroup(image);
+    this._imageGroupProvider.put(this.imageGroup)
       .then((result) => {
 
       })
@@ -205,7 +200,7 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
    * Event handler for the itemClicked event from `groupList`.
    * @param {any} event The click event.
    */
-  public groupListClickItem(event: any): void {
+  public imageListClickItem(event: any): void {
     console.log(event);
   }
 
@@ -213,9 +208,9 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
    * Event handler for the buttonClicked event from `groupList`.
    * @param {any} event The button event.
    */
-  public groupListClickButton(event: any): void {
+  public imageListClickButton(event: any): void {
     if (event.event === 'manage') {
-      this._router.navigate(['imagegroups']);
+      this._router.navigate(['images']);
     }
   }
 }

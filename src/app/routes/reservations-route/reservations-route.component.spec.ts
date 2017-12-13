@@ -10,6 +10,7 @@ import { ListComponent } from '../../components/list/list.component';
 import { Reservation } from '../../shared/reservation.class';
 import { Observable } from 'rxjs';
 import { FilterSelectorComponent } from '../../components/list/filter-selector/filter-selector.component';
+import { Router } from '@angular/router';
 
 import { ReservationsRouteComponent } from './reservations-route.component';
 
@@ -36,7 +37,8 @@ describe('ReservationsRouteComponent', () => {
       ],
       providers: [
         ReservationProviderService,
-        { provide: HttpClient, useValue: mockBackendService }
+        { provide: HttpClient, useValue: mockBackendService },
+        { provide: Router, useValue: { } }
       ],
       imports: [
         MaterialModule,

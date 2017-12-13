@@ -6,6 +6,7 @@ import { ListComponent, ListColumn, ListColumnType, ListOption } from '../../com
 import { AddReservationDialogComponent } from '../../components/add-reservation-dialog/add-reservation-dialog.component';
 import { ConnectReservationDialogComponent } from '../../components/connect-reservation-dialog/connect-reservation-dialog.component';
 import { EditReservationDialogComponent } from '../../components/edit-reservation-dialog/edit-reservation-dialog.component';
+import { Router } from '@angular/router';
 
 /**
  * Parent route component for the reservations page. Displays reservations and
@@ -35,6 +36,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
 
   /** Options to be displayed by ListComponent for the list of reservations. **/
   public options: Array<ListOption> = [
+    new ListOption('View'),
     new ListOption('Edit'),
     new ListOption('End').setEvent('delete').setMany(true),
     new ListOption('Create Image'),
@@ -51,6 +53,7 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
   }
 
   constructor(private _reservationProvider: ReservationProviderService,
+              private _router: Router,
               public dialog: MdDialog) {
     // this._reservationProvider.next();
   }
@@ -120,6 +123,8 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
       this._openEditDialog(event.target);
     } else if (event.event === 'delete') {
       this._deleteReservation(event.target);
+    } else if (event.event === 'view') {
+      this._router.navigate(['reservations', event.target.id]);
     }
   }
 
@@ -157,6 +162,12 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Deletes the given reservation.
+   * @param  {Reservation}  reservation The reservation to delete.
+   * @return {Promise<any>}             Promise of the reservation being
+   * deleted.
+   */
   private _deleteReservation(reservation: Reservation): Promise<any> {
     let promise = new Promise((resolve, reject) => {
       this._reservationProvider.delete(reservation)
