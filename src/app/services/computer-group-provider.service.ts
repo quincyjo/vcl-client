@@ -6,6 +6,7 @@ import { MockBackendService } from './mock-backend.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provider } from '../shared/provider.class';
 import { Response } from '../shared/response.class';
+import { CONFIG } from '../shared/config';
 
 /**
  * Concrete provider implementation of Provider for computer groups.
@@ -13,11 +14,11 @@ import { Response } from '../shared/response.class';
 @Injectable()
 export class ComputerGroupProviderService extends Provider<ComputerGroup> {
   /** API endpoint for computer groups. **/
-  private computerGroupsEndpoint: string = '/api/computergroups';
+  private computerGroupsEndpoint: string = CONFIG.API_ROOT + '/computergroups';
 
   constructor(private _http: HttpClient) {
     super();
-    this.computerGroupsEndpoint = '/api/computergroups';
+    this.computerGroupsEndpoint = CONFIG.API_ROOT + '/computergroups';
   }
 
   /**

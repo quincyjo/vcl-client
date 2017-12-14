@@ -6,6 +6,7 @@ import { MockBackendService } from './mock-backend.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provider } from '../shared/provider.class';
 import { Response } from '../shared/response.class';
+import { CONFIG } from '../shared/config';
 
 /**
  * Concrete provider implementation of Provider for computers.
@@ -13,11 +14,11 @@ import { Response } from '../shared/response.class';
 @Injectable()
 export class ComputerProviderService extends Provider<Computer> {
   /** API endpoint for computers. **/
-  private computersEndpoint: string = '/api/computers';
+  private computersEndpoint: string = CONFIG.API_ROOT + '/computers';
 
   constructor(private _http: HttpClient) {
     super();
-    this.computersEndpoint = '/api/computers';
+    this.computersEndpoint = CONFIG.API_ROOT + '/computers';
   }
 
   /**

@@ -3,6 +3,7 @@ import { Provider } from '../shared/provider.class';
 import { UserGroup } from '../shared/user-group.class';
 import { Response, Success, Error } from '../shared/response.class';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { CONFIG } from '../shared/config';
 
 /**
  * Concrete provider implementation of Provider for user grups.
@@ -10,11 +11,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 @Injectable()
 export class UserGroupProviderService extends Provider<UserGroup> {
   /** API endpoint for user groups. **/
-  public userGroupsEndpoint: string = '/api/usergroups';
+  public userGroupsEndpoint: string = CONFIG.API_ROOT + '/usergroups';
 
   constructor(private _http: HttpClient) {
     super();
-    this.userGroupsEndpoint = '/api/usergroups';
+    this.userGroupsEndpoint = CONFIG.API_ROOT + '/usergroups';
   }
 
   /**

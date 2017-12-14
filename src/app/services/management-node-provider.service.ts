@@ -1,32 +1,29 @@
 import { Injectable } from '@angular/core';
-import { ImageGroup } from '../shared/image-group.class';
+import { ManagementNode } from '../shared/management-node.class';
 import { Provider } from '../shared/provider.class';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { MockBackendService } from './mock-backend.service';
 import { Response } from '../shared/response.class';
 import { CONFIG } from '../shared/config';
 
-/**
- * Concrete provider implementation of Provider for image groups.
- */
 @Injectable()
-export class ImageGroupProviderService extends Provider<ImageGroup> {
-  /** The URL to the API endpoint for image group operations. **/
-  private _endpoint: string = CONFIG.API_ROOT + '/imagegroups';
+export class ManagementNodeProviderService extends Provider<ManagementNode> {
+  /** The URL to the API endpoint for management node operations. **/
+  private _endpoint: string = CONFIG.API_ROOT + '/managementnodes';
 
   constructor(private _http: HttpClient) {
     super();
-    this._endpoint = CONFIG.API_ROOT + '/imagegroups';
+    this._endpoint = CONFIG.API_ROOT + '/managementnodes';
   }
 
   /**
    * Attempts to add an image group to the server. The work is done as a promise which
    * will resolve to the added image group on success, or reject with the server error
    * if one occurs.
-   * @param  {ImageGroup}             item The image group to add.
+   * @param  {ManagementNode}             item The image group to add.
    * @return {Promise<Response>}      Promise of the image group being added.
    */
-  _addItem(item: ImageGroup): Promise<Response> {
+  _addItem(item: ManagementNode): Promise<Response> {
     let promise = new Promise<any>((resolve, reject) => {
       this._http.post<any>(this._endpoint, item)
         .subscribe(
@@ -45,15 +42,15 @@ export class ImageGroupProviderService extends Provider<ImageGroup> {
    * which will resolve to the requested image group on success, or reject with the
    * server error if one occurs.
    * @param  {number}         id Id of the target image group.
-   * @return {Promise<ImageGroup>}    Promise of the image group.
+   * @return {Promise<ManagementNode>}    Promise of the image group.
    */
-  _getItem(id: number): Promise<ImageGroup> {
-    let promise = new Promise<ImageGroup>((resolve, reject) => {
+  _getItem(id: number): Promise<ManagementNode> {
+    let promise = new Promise<ManagementNode>((resolve, reject) => {
       let url = this._endpoint + '/' + id;
-      this._http.get<ImageGroup>(url)
+      this._http.get<ManagementNode>(url)
         .subscribe(
           (result) => {
-            resolve(ImageGroup.rebuild(result));
+            resolve(result);
           },
           (error) => {
             reject(error);
@@ -66,11 +63,11 @@ export class ImageGroupProviderService extends Provider<ImageGroup> {
    * Attempts to update an item on the server with the given one. The work is
    * done as a promise which will resolve to the new version of the image group on
    * success, or reject with the server error if one occurs.
-   * @param  {ImageGroup}          item The new version of an image group with id.
-   * @return {Promise<ImageGroup>}      Promise of the image group being updated.
+   * @param  {ManagementNode}          item The new version of an image group with id.
+   * @return {Promise<ManagementNode>}      Promise of the image group being updated.
    */
-  _putItem(item: ImageGroup): Promise<ImageGroup> {
-    let promise = new Promise<ImageGroup>((resolve, reject) => {
+  _putItem(item: ManagementNode): Promise<ManagementNode> {
+    let promise = new Promise<ManagementNode>((resolve, reject) => {
       let url = this._endpoint + '/' + item.id;
       this._http.put<any>(url, item)
         .subscribe(
@@ -88,10 +85,10 @@ export class ImageGroupProviderService extends Provider<ImageGroup> {
    * Attempts to delete the given image group from the server. The work is done as a
    * promise which will resolve to the deleted upon on success, or reject with
    * the server error if one occurs .
-   * @param  {ImageGroup}          item The target image group to delete.
-   * @return {Promise<ImageGroup>}      Promise of the image group being deleted.
+   * @param  {ManagementNode}          item The target image group to delete.
+   * @return {Promise<ManagementNode>}      Promise of the image group being deleted.
    */
-  _deleteItem(item: ImageGroup): Promise<ImageGroup> {
+  _deleteItem(item: ManagementNode): Promise<ManagementNode> {
     let promise = new Promise<any>((resolve, reject) => {
       let url = this._endpoint + '/' + item.id;
       this._http.delete<any>(url)
@@ -115,9 +112,9 @@ export class ImageGroupProviderService extends Provider<ImageGroup> {
    * @param  {number = 10}          length The number of image groups to fetch.
    * @return {Promise}     Promise of the array of requested image groups.
    */
-  _getFrom(start: number = 0, length: number = 10): Promise<Array<ImageGroup>> {
-    let promise = new Promise<Array<ImageGroup>>((resolve, reject) => {
-      this._http.get<Array<ImageGroup>>(this._endpoint, {
+  _getFrom(start: number = 0, length: number = 10): Promise<Array<ManagementNode>> {
+    let promise = new Promise<Array<ManagementNode>>((resolve, reject) => {
+      this._http.get<Array<ManagementNode>>(this._endpoint, {
         params: new HttpParams()
           .set('start', start.toString())
           .set('length', length.toString())
@@ -125,8 +122,8 @@ export class ImageGroupProviderService extends Provider<ImageGroup> {
         .subscribe(
           (result) => {
             let results = [];
-            for (let group of result) {
-              results.push(ImageGroup.rebuild(group));
+            for (let node of result) {
+              results.push(node);
             };
             resolve(results);
           },

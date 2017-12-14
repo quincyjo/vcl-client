@@ -7,6 +7,7 @@ import { MockBackendService } from './mock-backend.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provider } from '../shared/provider.class';
 import { Response } from '../shared/response.class';
+import { CONFIG } from '../shared/config';
 
 /**
  * Concrete provider implementation of Provider for reservations.
@@ -14,11 +15,11 @@ import { Response } from '../shared/response.class';
 @Injectable()
 export class ReservationProviderService extends Provider<Reservation> {
   /** API endpoint for reservations. **/
-  private reservationsEndpoint: string = '/api/reservations';
+  private reservationsEndpoint: string = CONFIG.API_ROOT + '/reservations';
 
   constructor(private _http: HttpClient) {
     super();
-    this.reservationsEndpoint = '/api/reservations';
+    this.reservationsEndpoint = CONFIG.API_ROOT + '/reservations';
   }
 
   /**

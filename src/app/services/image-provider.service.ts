@@ -4,6 +4,7 @@ import { Provider } from '../shared/provider.class';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { MockBackendService } from './mock-backend.service';
 import { Response } from '../shared/response.class';
+import { CONFIG } from '../shared/config';
 
 /**
  * Provider for images.
@@ -11,11 +12,11 @@ import { Response } from '../shared/response.class';
 @Injectable()
 export class ImageProviderService extends Provider<Image> {
   /** The URL to the API endpoint for image operations. **/
-  private imagesEndpoint: string = '/api/images';
+  private imagesEndpoint: string = CONFIG.API_ROOT + '/images';
 
   constructor(private _http: HttpClient) {
     super();
-    this.imagesEndpoint = '/api/images';
+    this.imagesEndpoint = CONFIG.API_ROOT + '/images';
   }
 
   /**
