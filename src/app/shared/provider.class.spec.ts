@@ -1,15 +1,18 @@
 import { async } from '@angular/core/testing';
 import { Provider } from './provider.class';
 import { Idable } from './idable.interface';
+import { EventManagerService } from '../services/event-manager.service';
 import { Response, Error, Success } from './response.class';
 
 describe('Provider', () => {
   let provider: Provider<Item>;
   let remote: MockRemoteDataSource<Item>;
+  let eventManager: EventManagerService;
 
   beforeEach(() => {
     remote = new MockRemoteDataSource(ITEMS);
-    provider = new ItemProvider(remote);
+    provider = new ItemProvider(remote, eventManager);
+    eventManager = new EventManagerService();
   });
 
   it('should add an item', async(() => {
@@ -374,8 +377,11 @@ class MockRemoteDataSource<T extends Idable> {
  */
 class ItemProvider extends Provider<Item> {
 
-  constructor(public remote: MockRemoteDataSource<Item>) {
-    super();
+  constructor(
+    public remote: MockRemoteDataSource<Item>,
+    public eventManager: EventManagerService
+  ) {
+    super(eventManager);
   }
 
   _addItem(item: Item): Promise<any> {

@@ -4,6 +4,7 @@ import { Provider } from '../shared/provider.class';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { MockBackendService } from './mock-backend.service';
 import { Response } from '../shared/response.class';
+import { EventManagerService } from '../services/event-manager.service';
 import { CONFIG } from '../shared/config';
 
 @Injectable()
@@ -11,8 +12,11 @@ export class ManagementNodeProviderService extends Provider<ManagementNode> {
   /** The URL to the API endpoint for management node operations. **/
   private _endpoint: string = CONFIG.API_ROOT + '/managementnodes';
 
-  constructor(private _http: HttpClient) {
-    super();
+  constructor(
+    private _http: HttpClient,
+    eventManager: EventManagerService,
+  ) {
+    super(eventManager);
     this._endpoint = CONFIG.API_ROOT + '/managementnodes';
   }
 

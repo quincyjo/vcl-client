@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ComputerGroupDetailRouteComponent } from './computer-group-detail-route.component';
@@ -19,6 +20,7 @@ describe('ComputerGroupDetailRouteComponent', () => {
   let component: ComputerGroupDetailRouteComponent;
   let fixture: ComponentFixture<ComputerGroupDetailRouteComponent>;
   let mockBackend: MockBackendService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -31,6 +33,7 @@ describe('ComputerGroupDetailRouteComponent', () => {
         ComputerProviderService,
         ComputerGroupProviderService,
         { provide: HttpClient, userValue: mockBackend },
+        { provide: EventManagerService, userValue: eventManager },
         { provide: Router, userValue: {} },
         { provide: ActivatedRoute, useValue: {
           params: Observable.of({id: 0})

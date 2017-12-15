@@ -9,7 +9,9 @@ import { Injectable, EventEmitter } from '@angular/core';
 export class EventManagerService {
   private _events: any;
 
-  constructor() { }
+  constructor() {
+    this._events = {};
+  }
 
   /**
    * Fires the given event with key `label` with the value `event`.
@@ -29,7 +31,7 @@ export class EventManagerService {
    * @param  {(}      cb    The callback to handle when the even fires.
    * @return {[type]}       The subscription.
    */
-  public subscribe(label: string, cb: () => void): any {
+  public subscribe(label: string, cb: (event: any) => void): any {
     this._verify(label);
     return this._events[label].subscribe(cb);
   }

@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule, MdNativeDateModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ReservationProviderService } from '../../services/reservation-provider.service';
+import { EventManagerService } from '../../services/event-manager.service';
 import { MockBackendService } from '../../services/mock-backend.service';
 import { HttpClient } from '@angular/common/http';
 
@@ -13,7 +14,7 @@ class MockMdDialogRef {
   constructor() { }
 
   public close(): void {
-    
+
   }
 }
 
@@ -21,6 +22,7 @@ describe('EditReservationDialogComponent', () => {
   let component: EditReservationDialogComponent;
   let fixture: ComponentFixture<EditReservationDialogComponent>;
   let mockBackendService: MockBackendService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     let mockMdDialogData = {
@@ -38,7 +40,8 @@ describe('EditReservationDialogComponent', () => {
         ReservationProviderService,
         { provide: MdDialogRef, useValue: mockMdDialogRef},
         { provide: MD_DIALOG_DATA, useValue: mockMdDialogData},
-        { provide: HttpClient, useValue: mockBackendService }
+        { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager }
       ],
       imports: [
         ReactiveFormsModule,

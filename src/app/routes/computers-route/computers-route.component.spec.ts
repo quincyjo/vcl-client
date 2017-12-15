@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { Computer } from '../../shared/computer.class';
 import { Observable } from 'rxjs';
 import { FilterSelectorComponent } from '../../components/list/filter-selector/filter-selector.component';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ComputersRouteComponent } from './computers-route.component';
@@ -17,6 +18,7 @@ describe('ComputersRouteComponent', () => {
   let component: ComputersRouteComponent;
   let fixture: ComponentFixture<ComputersRouteComponent>;
   let mockBackendService: MockBackendService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     mockBackendService = new MockBackendService();
@@ -29,6 +31,7 @@ describe('ComputersRouteComponent', () => {
       providers: [
         ComputerProviderService,
         { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager },
         { provide: Router, useValue: { } }
       ],
       imports: [

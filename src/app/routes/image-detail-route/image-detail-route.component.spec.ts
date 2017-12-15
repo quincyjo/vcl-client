@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ImageDetailRouteComponent } from './image-detail-route.component';
@@ -19,6 +20,7 @@ describe('ImageDetailRouteComponent', () => {
   let component: ImageDetailRouteComponent;
   let fixture: ComponentFixture<ImageDetailRouteComponent>;
   let mockBackend: MockBackendService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     mockBackend = new MockBackendService();
@@ -32,6 +34,7 @@ describe('ImageDetailRouteComponent', () => {
         ImageProviderService,
         ImageGroupProviderService,
         { provide: HttpClient, userValue: mockBackend },
+        { provide: EventManagerService, userValue: eventManager },
         { provide: Router, userValue: {} },
         { provide: ActivatedRoute, useValue: {
           params: Observable.of({id: 0})

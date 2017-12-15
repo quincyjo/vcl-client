@@ -9,6 +9,7 @@ import { ListComponent } from '../../components/list/list.component';
 import { ComputerGroup } from '../../shared/computer-group.class';
 import { Observable } from 'rxjs';
 import { FilterSelectorComponent } from '../../components/list/filter-selector/filter-selector.component';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ComputerGroupsRouteComponent } from './computer-groups-route.component';
@@ -18,6 +19,7 @@ describe('ComputerGroupsRouteComponent', () => {
   let fixture: ComponentFixture<ComputerGroupsRouteComponent>;
   let mockBackendService: MockBackendService;
   let reservationProvider: ComputerGroupProviderService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     mockBackendService = new MockBackendService();
@@ -30,6 +32,7 @@ describe('ComputerGroupsRouteComponent', () => {
       providers: [
         ComputerGroupProviderService,
         { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager },
         { provide: Router, useValue: { } }
       ],
       imports: [

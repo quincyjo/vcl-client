@@ -6,6 +6,7 @@ import { MockBackendService } from './mock-backend.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provider } from '../shared/provider.class';
 import { Response } from '../shared/response.class';
+import { EventManagerService } from '../services/event-manager.service';
 import { CONFIG } from '../shared/config';
 
 /**
@@ -16,8 +17,11 @@ export class ComputerGroupProviderService extends Provider<ComputerGroup> {
   /** API endpoint for computer groups. **/
   private computerGroupsEndpoint: string = CONFIG.API_ROOT + '/computergroups';
 
-  constructor(private _http: HttpClient) {
-    super();
+  constructor(
+    private _http: HttpClient,
+    eventManager: EventManagerService,
+  ) {
+    super(eventManager);
     this.computerGroupsEndpoint = CONFIG.API_ROOT + '/computergroups';
   }
 

@@ -4,16 +4,20 @@ import { ComputerGroupProviderService } from './computer-group-provider.service'
 import { MockBackendService } from './mock-backend.service';
 import { HttpClient } from '@angular/common/http';
 import { Response, Success, Error, CODE } from '../shared/response.class';
+import { EventManagerService } from './event-manager.service';
 import { ComputerGroup } from '../shared/computer-group.class';
 
 describe('ComputerGroupProviderService', () => {
   let mockBackendService: MockBackendService;
+  let eventManager: EventManagerService;
+
   beforeEach(() => {
     mockBackendService = new MockBackendService();
     TestBed.configureTestingModule({
       providers: [
         ComputerGroupProviderService,
-        { provide: HttpClient, useValue: mockBackendService }
+        { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager }
       ]
     });
   });

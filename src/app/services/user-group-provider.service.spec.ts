@@ -4,15 +4,19 @@ import { HttpClient } from '@angular/common/http';
 import { UserGroupProviderService } from './user-group-provider.service';
 import { MockBackendService, USER_GROUPS } from './mock-backend.service';
 import { UserGroup } from '../shared/user-group.class';
+import { EventManagerService } from './event-manager.service';
 import { Response, Success, Error, CODE } from '../shared/response.class';
 
 describe('UserGroupProviderService', () => {
+  let eventManager: EventManagerService;
+
   beforeEach(() => {
     let backend: MockBackendService = new MockBackendService();
     TestBed.configureTestingModule({
       providers: [
         UserGroupProviderService,
-        { provide: HttpClient, useValue: backend }
+        { provide: HttpClient, useValue: backend },
+        { provide: EventManagerService, useValue: eventManager }
       ]
     });
   });

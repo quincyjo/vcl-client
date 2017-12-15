@@ -17,5 +17,6 @@ export const CONFIG = {
    * 'https://www.myvcl.com' and the reservations endpoint would be determined
    * as 'https://www.myvcl.com/api/reservations'.
    */
-  API_ROOT: '/api'
+  // API_ROOT: '/api',
+  API_ROOT: 'http://169.55.9.45:8000/api',
 }

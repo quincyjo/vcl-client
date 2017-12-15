@@ -100,9 +100,11 @@ export class ReservationsRouteComponent implements OnInit, AfterViewInit {
           .then((result) => {
             this.loading = false;
             this.hasNext = result;
+            console.log(result);
             resolve(result);
           })
           .catch((error) => {
+            console.log(error);
             reject(error);
           });
       }

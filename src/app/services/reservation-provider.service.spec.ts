@@ -4,16 +4,20 @@ import { ReservationProviderService } from './reservation-provider.service';
 import { Reservation } from '../shared/reservation.class';
 import { MockBackendService } from './mock-backend.service';
 import { HttpClient } from '@angular/common/http';
+import { EventManagerService } from './event-manager.service';
 import { Response, Success, Error, CODE } from '../shared/response.class';
 
 describe('ReservationProviderService', () => {
   let mockBackendService: MockBackendService;
+  let eventManager: EventManagerService;
+
   beforeEach(() => {
     mockBackendService = new MockBackendService();
     TestBed.configureTestingModule({
       providers: [
         ReservationProviderService,
-        { provide: HttpClient, useValue: mockBackendService }
+        { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager }
       ]
     });
   });

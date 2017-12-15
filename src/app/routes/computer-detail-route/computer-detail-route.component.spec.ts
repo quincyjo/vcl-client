@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ComputerDetailRouteComponent } from './computer-detail-route.component';
@@ -19,6 +20,7 @@ describe('ComputerDetailRouteComponent', () => {
   let component: ComputerDetailRouteComponent;
   let fixture: ComponentFixture<ComputerDetailRouteComponent>;
   let mockBackend: MockBackendService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     mockBackend = new MockBackendService();
@@ -33,6 +35,7 @@ describe('ComputerDetailRouteComponent', () => {
         ComputerGroupProviderService,
         { provide: HttpClient, userValue: mockBackend },
         { provide: Router, userValue: {} },
+        { provide: EventManagerService, userValue: eventManager },
         { provide: ActivatedRoute, useValue: {
           params: Observable.of({id: 0})
         }}

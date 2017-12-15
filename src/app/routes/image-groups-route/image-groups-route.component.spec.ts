@@ -3,6 +3,7 @@ import { MaterialModule } from '@angular/material';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ImageGroupsRouteComponent } from './image-groups-route.component';
@@ -15,6 +16,7 @@ describe('ImageGroupsRouteComponent', () => {
   let component: ImageGroupsRouteComponent;
   let fixture: ComponentFixture<ImageGroupsRouteComponent>;
   let mockBackend: MockBackendService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     mockBackend = new MockBackendService();
@@ -33,6 +35,7 @@ describe('ImageGroupsRouteComponent', () => {
       providers: [
         ImageGroupProviderService,
         { provide: HttpClient, useValue: mockBackend },
+        { provide: EventManagerService, useValue: eventManager },
         { provide: Router, useValue: {} }
       ]
     })

@@ -4,6 +4,7 @@ import { Provider } from '../shared/provider.class';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { MockBackendService } from './mock-backend.service';
 import { Response } from '../shared/response.class';
+import { EventManagerService } from '../services/event-manager.service';
 import { CONFIG } from '../shared/config';
 
 /**
@@ -14,8 +15,11 @@ export class ImageProviderService extends Provider<Image> {
   /** The URL to the API endpoint for image operations. **/
   private imagesEndpoint: string = CONFIG.API_ROOT + '/images';
 
-  constructor(private _http: HttpClient) {
-    super();
+  constructor(
+    private _http: HttpClient,
+    eventManager: EventManagerService,
+  ) {
+    super(eventManager);
     this.imagesEndpoint = CONFIG.API_ROOT + '/images';
   }
 

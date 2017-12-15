@@ -10,6 +10,7 @@ import { ListComponent } from '../../components/list/list.component';
 import { Reservation } from '../../shared/reservation.class';
 import { Observable } from 'rxjs';
 import { FilterSelectorComponent } from '../../components/list/filter-selector/filter-selector.component';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ReservationsRouteComponent } from './reservations-route.component';
@@ -26,6 +27,7 @@ describe('ReservationsRouteComponent', () => {
   let fixture: ComponentFixture<ReservationsRouteComponent>;
   let mockBackendService: MockBackendService;
   let reservationProvider: ReservationProviderService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     mockBackendService = new MockBackendService();
@@ -38,6 +40,7 @@ describe('ReservationsRouteComponent', () => {
       providers: [
         ReservationProviderService,
         { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager },
         { provide: Router, useValue: { } }
       ],
       imports: [

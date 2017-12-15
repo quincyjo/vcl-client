@@ -4,6 +4,7 @@ import { MaterialModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EventManagerService } from '../../services/event-manager.service';
 import { Router } from '@angular/router';
 
 import { ImagesRouteComponent } from './images-route.component';
@@ -17,6 +18,7 @@ describe('ImagesRouteComponent', () => {
   let component: ImagesRouteComponent;
   let fixture: ComponentFixture<ImagesRouteComponent>;
   let mockBackendService: MockBackendService;
+  let eventManager: EventManagerService;
 
   beforeEach(async(() => {
     mockBackendService = new MockBackendService();
@@ -35,6 +37,7 @@ describe('ImagesRouteComponent', () => {
       providers: [
         ImageProviderService,
         { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager },
         { provide: Router, useValue: {} },
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]

@@ -4,16 +4,20 @@ import { ManagementNodeProviderService } from './management-node-provider.servic
 import { MockBackendService } from './mock-backend.service';
 import { HttpClient } from '@angular/common/http';
 import { Response, Success, Error, CODE } from '../shared/response.class';
+import { EventManagerService } from './event-manager.service';
 import { ManagementNode } from '../shared/management-node.class';
 
 describe('ManagementNodeProviderService', () => {
   let mockBackendService: MockBackendService;
+  let eventManager: EventManagerService;
+
   beforeEach(() => {
     mockBackendService = new MockBackendService();
     TestBed.configureTestingModule({
       providers: [
         ManagementNodeProviderService,
-        { provide: HttpClient, useValue: mockBackendService }
+        { provide: HttpClient, useValue: mockBackendService },
+        { provide: EventManagerService, useValue: eventManager }
       ]
     });
   });

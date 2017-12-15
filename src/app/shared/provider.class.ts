@@ -1,7 +1,8 @@
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+  import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription } from 'rxjs';
 import { Idable } from './idable.interface';
 import { Response } from './response.class';
+import { EventManagerService } from '../services/event-manager.service';
 
 /**
  * An abstract provider for data via a remote data source. Handles local caching
@@ -91,7 +92,9 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
    */
   public asyncIterator: () => AsyncIterator<T> = this[Symbol.asyncIterator];
 
-  constructor() {
+  constructor(
+    private _eventManager: EventManagerService
+  ) {
     this.dataChange = new BehaviorSubject<Array<T>>([]);
     this.onCreate = new BehaviorSubject<T>(undefined);
     this.onUpdate = new BehaviorSubject<T>(undefined);
@@ -144,8 +147,6 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
   /**
    * Attempts to fetch the item with the given id from the remote data source.
    * Resolves to the item upon success and rejects with the error if one occurs.
-   * In additiona, the `dataChange` variable will fire with the new list if
-   * the item was added to the local version or updated as the remote version
    * conflicted with the previous local copy.
    * @param  {number}     id The id of the target item.
    * @return {Promise<T>}    Promise of the item to be fetched.
@@ -172,6 +173,7 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
           resolve(item);
         })
         .catch((error) => {
+          this._handleError(error);
           reject(error);
         })
     });
@@ -195,6 +197,7 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
           resolve(item);
         })
         .catch((error) => {
+          this._handleError(error);
           reject(error);
         });
     });
@@ -223,6 +226,7 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
           resolve(item);
         })
         .catch((error) => {
+          this._handleError(error);
           reject(error);
         });
     });
@@ -244,6 +248,7 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
           resolve(result);
         })
         .catch((error) => {
+          this._handleError(error);
           reject(error);
         });
       } else {
@@ -268,12 +273,16 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
           if (items.length < length) {
             this._done = true;
           }
+          if (!Array.isArray(items)) {
+            items = [items];
+          }
           for(const item of items) {
             this._push(item);
           }
           resolve(this.hasNext);
         })
         .catch((error) => {
+          this._handleError(error);
           reject(error);
         });
     });
@@ -305,6 +314,15 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
   private _next(): void {
     const COPIED_DATA = this._data.slice();
     this.dataChange.next(COPIED_DATA);
+  }
+
+  /**
+   * Handler for handling error returns from the remote services of Concrete
+   * providers.
+   * @param {Error} error The error to handle.
+   */
+  private _handleError(error: Error): void {
+    this._eventManager.fire('error', error);
   }
 
   /**

@@ -17,6 +17,7 @@ import { ImageGroupProviderService } from './services/image-group-provider.servi
 import { ComputerProviderService } from './services/computer-provider.service';
 import { ComputerGroupProviderService } from './services/computer-group-provider.service';
 import { ManagementNodeProviderService } from './services/management-node-provider.service';
+import { EventManagerService } from './services/event-manager.service';
 import { MockBackendService } from './services/mock-backend.service';
 
 import { LoginRouteComponent } from './routes/login-route/login-route.component';
@@ -48,6 +49,7 @@ import { ComputerDetailRouteComponent } from './routes/computer-detail-route/com
 import 'hammerjs';
 import { ManagementNodesRouteComponent } from './routes/management-nodes-route/management-nodes-route.component';
 import { ManagementNodeDetailRouteComponent } from './routes/management-node-detail-route/management-node-detail-route.component';
+import { NotificationStackComponent } from './components/notification-stack/notification-stack.component';
 
 let http: any
   = environment.production
@@ -56,6 +58,7 @@ let http: any
     provide: HttpClient,
     useClass: MockBackendService
   };
+http = HttpClient;
 
 const routes: Routes = [
   {
@@ -166,7 +169,8 @@ const routes: Routes = [
     ComputerGroupDetailRouteComponent,
     ComputerDetailRouteComponent,
     ManagementNodesRouteComponent,
-    ManagementNodeDetailRouteComponent
+    ManagementNodeDetailRouteComponent,
+    NotificationStackComponent
   ],
   entryComponents: [
     AddReservationDialogComponent,
@@ -192,6 +196,7 @@ const routes: Routes = [
     ComputerGroupProviderService,
     ComputerProviderService,
     ManagementNodeProviderService,
+    EventManagerService,
     AuthGuard,
     http
   ],

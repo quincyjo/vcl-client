@@ -7,6 +7,7 @@ import { MockBackendService } from './mock-backend.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Provider } from '../shared/provider.class';
 import { Response } from '../shared/response.class';
+import { EventManagerService } from '../services/event-manager.service';
 import { CONFIG } from '../shared/config';
 
 /**
@@ -17,8 +18,11 @@ export class ReservationProviderService extends Provider<Reservation> {
   /** API endpoint for reservations. **/
   private reservationsEndpoint: string = CONFIG.API_ROOT + '/reservations';
 
-  constructor(private _http: HttpClient) {
-    super();
+  constructor(
+    private _http: HttpClient,
+    eventManager: EventManagerService,
+  ) {
+    super(eventManager);
     this.reservationsEndpoint = CONFIG.API_ROOT + '/reservations';
   }
 
@@ -72,9 +76,11 @@ export class ReservationProviderService extends Provider<Reservation> {
       this._http.get<Reservation>(url)
         .subscribe(
           (result) => {
+            console.log(result);
             resolve(result);
           },
           (error) => {
+            console.log(error);
             reject(error);
           });
     });

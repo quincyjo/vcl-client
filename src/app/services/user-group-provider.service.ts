@@ -3,6 +3,7 @@ import { Provider } from '../shared/provider.class';
 import { UserGroup } from '../shared/user-group.class';
 import { Response, Success, Error } from '../shared/response.class';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { EventManagerService } from '../services/event-manager.service';
 import { CONFIG } from '../shared/config';
 
 /**
@@ -13,8 +14,11 @@ export class UserGroupProviderService extends Provider<UserGroup> {
   /** API endpoint for user groups. **/
   public userGroupsEndpoint: string = CONFIG.API_ROOT + '/usergroups';
 
-  constructor(private _http: HttpClient) {
-    super();
+  constructor(
+    private _http: HttpClient,
+    eventManager: EventManagerService,
+  ) {
+    super(eventManager);
     this.userGroupsEndpoint = CONFIG.API_ROOT + '/usergroups';
   }
 
