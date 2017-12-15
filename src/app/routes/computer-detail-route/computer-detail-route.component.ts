@@ -23,13 +23,13 @@ export class ComputerDetailRouteComponent implements OnInit, OnDestroy {
   @ViewChild('groupList') groupList;
 
   /** The computer to show the details off. **/
-  private computer: Computer;
+  public computer: Computer;
 
   /** The computer groups. **/
-  private computerGroups: Array<ComputerGroup>;
+  public computerGroups: Array<ComputerGroup>;
 
   /** Subscription to the route parameters. **/
-  private paramsSub: any;
+  public paramsSub: any;
 
   /** The form for editing the `computer`. **/
   public computerForm: FormGroup;

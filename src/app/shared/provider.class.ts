@@ -270,11 +270,11 @@ export abstract class Provider<T extends Idable> implements AsyncIterable<T> {
     let promise = new Promise<boolean>((resolve, reject) => {
       this._getFrom(start, length)
         .then((items) => {
-          if (items.length < length) {
-            this._done = true;
-          }
           if (!Array.isArray(items)) {
             items = [items];
+          }
+          if (items.length < length) {
+            this._done = true;
           }
           for(const item of items) {
             this._push(item);

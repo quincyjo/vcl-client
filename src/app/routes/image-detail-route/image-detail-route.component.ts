@@ -23,13 +23,13 @@ export class ImageDetailRouteComponent implements OnInit, OnDestroy {
   @ViewChild('groupList') groupList;
 
   /** The image to show the details off. **/
-  private image: Image;
+  public image: Image;
 
   /** The image groups. **/
-  private imageGroups: Array<ImageGroup>;
+  public imageGroups: Array<ImageGroup>;
 
   /** Subscription to the route parameters. **/
-  private paramsSub: any;
+  public paramsSub: any;
 
   /** The form for editing the `image`. **/
   public imageForm: FormGroup;
