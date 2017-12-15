@@ -58,7 +58,6 @@ let http: any
     provide: HttpClient,
     useClass: MockBackendService
   };
-http = HttpClient;
 
 const routes: Routes = [
   {

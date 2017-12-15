@@ -18,5 +18,5 @@ export const CONFIG = {
    * as 'https://www.myvcl.com/api/reservations'.
    */
   // API_ROOT: '/api',
-  API_ROOT: 'http://169.55.9.45:8000/api',
+  API_ROOT: '/api',
 }
